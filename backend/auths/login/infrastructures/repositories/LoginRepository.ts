@@ -19,6 +19,7 @@ export class LoginRepository implements LoginRepositoryInterface {
 
     return LoginMapper.toLoginEntity({
       id: data.id,
+      uuid: data.uuid,
       name: data.name,
       email: data.email,
       phoneNumber: data.phone_number,
