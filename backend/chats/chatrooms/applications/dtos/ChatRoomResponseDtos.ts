@@ -2,7 +2,8 @@
 
 // 채팅방 기본 정보 응답 DTO
 export interface ChatRoomResponseDto {
-  helpId: number;
+  chatRoomId: number;
+  helpId?: number;
   juniorId: number;
   seniorId: number;
   createdAt: string;

@@ -5,14 +5,17 @@ import { getUserIdFromCookie } from '@/lib/jwt';
 
 // GET /api/chats/rooms
 export async function GET(req: NextRequest) {
-  // JWT에서 userId 추출 (로그인한 사용자)
   const userId = getUserIdFromCookie(req);
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  // 유스케이스 실행
-  const usecase = new GetChatRoomsUseCase(new SbChatRoomRepository());
-  const rooms = await usecase.execute({ userId });
-
-  // 결과 반환
-  return NextResponse.json(rooms);
+  try {
+    const usecase = new GetChatRoomsUseCase(new SbChatRoomRepository());
+    const rooms = await usecase.execute({ userId });
+    return NextResponse.json({ message: '채팅방 리스트 조회 성공', rooms }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { message: '채팅방 리스트 조회 실패', error: String(error) },
+      { status: 500 }
+    );
+  }
 } 

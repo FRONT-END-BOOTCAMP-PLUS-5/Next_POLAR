@@ -10,6 +10,7 @@ export class GetChatRoomsUseCase {
     const rooms = await this.chatRoomRepo.findRoomsByUserId(request.userId);
     
     const roomDtos: ChatRoomResponseDto[] = rooms.map(room => ({
+      chatRoomId: room.chatRoomId,
       helpId: room.helpId,
       juniorId: room.juniorId,
       seniorId: room.seniorId,

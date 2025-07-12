@@ -6,9 +6,9 @@ import { ChatRoomDetailResponseDto } from '@/backend/chats/chatrooms/application
 export class GetChatRoomDetailUseCase {
   constructor(private chatRoomRepo: IChatRoomRepository) {}
 
-  // helpId로 대화방 1개 정보 반환
+  // chatRoomId로 대화방 1개 정보 반환
   async execute(request: GetChatRoomDetailRequestDto): Promise<ChatRoomDetailResponseDto | null> {
-    const room = await this.chatRoomRepo.findRoomByHelpId(request.helpId);
+    const room = await this.chatRoomRepo.findRoomByChatRoomId(request.chatRoomId);
     
     if (!room) {
       return null;
@@ -20,6 +20,7 @@ export class GetChatRoomDetailUseCase {
   // ChatRoom 엔티티를 응답 DTO로 매핑하는 private 메서드
   private mapRoomToResponseDto(room: ChatRoom): ChatRoomDetailResponseDto {
     return {
+      chatRoomId: room.chatRoomId,
       helpId: room.helpId,
       juniorId: room.juniorId,
       seniorId: room.seniorId,

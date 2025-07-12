@@ -7,5 +7,5 @@ export interface GetUserChatRoomsRequestDto {
 
 // 채팅방 상세 정보 조회 요청 DTO
 export interface GetChatRoomDetailRequestDto {
-  helpId: number;
+  chatRoomId: number;
 } 
