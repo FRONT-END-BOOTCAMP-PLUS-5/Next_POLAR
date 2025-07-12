@@ -6,17 +6,17 @@ import { ReviewEntity } from '@/backend/reviews/domains/entities/review';
 
 const reviewUseCases = new ReviewUseCases(new SbReviewRepository());
 
-// GET /api/reviews?helpId=...
+// GET /api/reviews?userId=...
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const helpId = searchParams.get('helpId');
+  const userId = searchParams.get('userId');
 
   try {
-    if (helpId) {
-      const reviews = await reviewUseCases.getReviewsByHelpId(Number(helpId));
+    if (userId) {
+      const reviews = await reviewUseCases.getReviewsByReceiverId(Number(userId));
       return NextResponse.json({ success: true, reviews }, { status: 200 });
     }
-    return NextResponse.json({ error: 'helpId 쿼리 파라미터가 필요합니다.' }, { status: 400 });
+    return NextResponse.json({ error: 'userId 쿼리 파라미터가 필요합니다.' }, { status: 400 });
   } catch (error: unknown) {
     // 에러 타입 검증
     if (error instanceof Error) {

@@ -4,36 +4,18 @@ import { IReviewRepository } from '@/backend/reviews/domains/repositories/Review
 import { ReviewEntity } from '@/backend/reviews/domains/entities/review';
 
 export class SbReviewRepository implements IReviewRepository {
-  // helpId로 리뷰 리스트 조회
-  async findByHelpId(helpId: number): Promise<ReviewEntity[]> {
+  // receiverId로 받은 리뷰 리스트 조회
+  async findByReceiverId(receiverId: number): Promise<ReviewEntity[]> {
     const { data, error } = await supabase
       .from('reviews')
       .select('*')
-      .eq('help_id', helpId)
+      .eq('receiver_id', receiverId)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
     if (!data) return [];
 
-    return data.map(
-      (review: {
-        id: number;
-        user_id: number;
-        help_id: number;
-        rating: number;
-        comment: string;
-        created_at: string;
-      }) =>
-        new ReviewEntity(
-          review.id,
-          review.help_id,
-          review.user_id,
-          review.user_id, // receiverId는 일단 writerId와 동일하게 설정
-          review.rating,
-          review.comment,
-          new Date(review.created_at)
-        )
-    );
+    return data.map((review) => ReviewMapper.toEntity(review));
   }
 
   // 리뷰 id로 단일 리뷰 상세 조회
