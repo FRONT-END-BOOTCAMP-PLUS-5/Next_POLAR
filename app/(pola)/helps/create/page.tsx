@@ -6,25 +6,17 @@ import styles from './createHelp.module.css';
 import Step1HelpType from './components/Step1HelpType';
 import Step2TimeSelection from './components/Step2TimeSelection';
 import Step3HelpDetails from './components/Step3HelpDetails';
-import { useCreateHelp, useCreateHelpImages } from '@/lib/hooks/useCreateHelp';
+import { useCreateHelp } from '@/lib/hooks/useCreateHelp';
+import { useImageUpload } from '@/lib/hooks/useImageUpload';
+import { useImageContext } from '@/lib/contexts/ImageContext';
+import { HelpFunnelData } from '@/lib/models/createHelpDto';
 
 type Step = 1 | 2 | 3;
-
-interface HelpFormData {
-  type: string | null;
-  timeType: string | null;
-  date: string;
-  startTime: string;
-  endTime: string;
-  title: string;
-  content: string;
-  imageFiles: File[];
-}
 
 const CreateHelpPage: React.FC = () => {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<Step>(1);
-  const [formData, setFormData] = useState<HelpFormData>({
+  const [helpData, setHelpData] = useState<HelpFunnelData>({
     type: null,
     timeType: null,
     date: new Date().toISOString().split('T')[0],
@@ -34,56 +26,52 @@ const CreateHelpPage: React.FC = () => {
     content: '',
     imageFiles: [],
   });
-
   const { mutateAsync, isPending } = useCreateHelp();
-  const { mutateAsync: uploadImageMutation } = useCreateHelpImages();
+  const { uploadCurrentImages, isUploading } = useImageUpload();
+  const { imageFiles } = useImageContext();
 
   const handleTypeSelect = (type: string) => {
-    setFormData((prev) => ({ ...prev, type }));
+    setHelpData((prev) => ({ ...prev, type }));
   };
 
   const handleTimeTypeSelect = (timeType: string) => {
-    setFormData((prev) => ({ ...prev, timeType }));
+    setHelpData((prev) => ({ ...prev, timeType }));
   };
 
   const handleDateChange = (date: string) => {
-    setFormData((prev) => ({ ...prev, date }));
+    setHelpData((prev) => ({ ...prev, date }));
   };
 
   const handleStartTimeChange = (startTime: string) => {
-    setFormData((prev) => ({ ...prev, startTime }));
+    setHelpData((prev) => ({ ...prev, startTime }));
   };
 
   const handleEndTimeChange = (endTime: string) => {
-    setFormData((prev) => ({ ...prev, endTime }));
+    setHelpData((prev) => ({ ...prev, endTime }));
   };
 
   const handleTitleChange = (title: string) => {
-    setFormData((prev) => ({ ...prev, title }));
+    setHelpData((prev) => ({ ...prev, title }));
   };
 
   const handleContentChange = (content: string) => {
-    setFormData((prev) => ({ ...prev, content }));
-  };
-
-  const handleImageChange = (imageFiles: File[]) => {
-    setFormData((prev) => ({ ...prev, imageFiles }));
+    setHelpData((prev) => ({ ...prev, content }));
   };
 
   const canGoNext = () => {
     switch (currentStep) {
       case 1:
-        return formData.type !== null;
+        return helpData.type !== null;
       case 2:
         if (
-          formData.timeType === 'specific' ||
-          formData.timeType === 'tomorrow'
+          helpData.timeType === 'specific' ||
+          helpData.timeType === 'tomorrow'
         ) {
-          return formData.date && formData.startTime && formData.endTime;
+          return helpData.date && helpData.startTime && helpData.endTime;
         }
-        return formData.timeType !== null;
+        return helpData.timeType !== null;
       case 3:
-        return formData.title.trim() !== '' && formData.content.trim() !== '';
+        return helpData.title.trim() !== '' && helpData.content.trim() !== '';
       default:
         return false;
     }
@@ -108,53 +96,36 @@ const CreateHelpPage: React.FC = () => {
   const handleSubmit = async () => {
     if (!canGoNext()) return;
 
-    let createdHelpId = null;
-    const uploadedImageUrls: string[] = [];
+    let uploadedImageUrls: string[] = [];
 
     try {
-      // 1. 먼저 도움 요청 생성
-      const helpData = {
-        title: formData.title,
-        content: formData.content,
-        category: formData.type === 'heavy' ? 1 : 2, // 무거워요: 1, 어려워요: 2
-        startDate:
-          formData.timeType === 'now'
-            ? new Date().toISOString()
-            : `${formData.date}T${formData.startTime}:00`,
-        endDate:
-          formData.timeType === 'now'
-            ? new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString() // 2시간 후
-            : `${formData.date}T${formData.endTime}:00`,
-        imageFiles: [],
-      };
+      // 1. 이미지가 있다면 먼저 업로드
+      if (imageFiles.length > 0) {
+        uploadedImageUrls = await uploadCurrentImages();
+        console.log('업로드된 이미지 URLs:', uploadedImageUrls);
+      }
 
       // 2. 도움 요청 생성
-      const helpResult = await mutateAsync(helpData);
-      createdHelpId = helpResult?.id || null;
+      const helpFormData = {
+        title: helpData.title,
+        content: helpData.content,
+        category: helpData.type === 'heavy' ? 1 : 2, // 무거워요: 1, 어려워요: 2
+        startDate:
+          helpData.timeType === 'now'
+            ? new Date().toISOString()
+            : `${helpData.date}T${helpData.startTime}:00`,
+        endDate:
+          helpData.timeType === 'now'
+            ? new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString() // 2시간 후
+            : `${helpData.date}T${helpData.endTime}:00`,
+        imageFiles: uploadedImageUrls, // 업로드된 이미지 URL 배열
+      };
+
+      const helpResult = await mutateAsync(helpFormData);
+      const createdHelpId = helpResult?.id || null;
 
       if (!createdHelpId) {
         throw new Error('도움 요청 생성 후 ID를 받지 못했습니다.');
-      }
-
-      // 3. 이미지가 있다면 업로드
-      if (formData.imageFiles.length > 0) {
-        const uploadPromises = formData.imageFiles.map(async (file) => {
-          console.log('file', file);
-          const uploadResult = await uploadImageMutation({
-            imageFiles: [file],
-          });
-          const responseData = uploadResult as { url: string };
-          if (responseData?.url) {
-            return responseData.url;
-          } else {
-            throw new Error('이미지 업로드 후 URL을 받지 못했습니다.');
-          }
-        });
-
-        const uploadedUrls = await Promise.all(uploadPromises);
-        uploadedImageUrls.push(...uploadedUrls);
-
-        console.log('업로드된 이미지 URLs:', uploadedImageUrls);
       }
 
       // const helpResult = await mutateAsync({
@@ -219,17 +190,17 @@ const CreateHelpPage: React.FC = () => {
       {/* 단계별 컨텐츠 */}
       {currentStep === 1 && (
         <Step1HelpType
-          selectedType={formData.type}
+          selectedType={helpData.type}
           onTypeSelect={handleTypeSelect}
         />
       )}
 
       {currentStep === 2 && (
         <Step2TimeSelection
-          selectedTimeType={formData.timeType}
-          selectedDate={formData.date}
-          selectedStartTime={formData.startTime}
-          selectedEndTime={formData.endTime}
+          selectedTimeType={helpData.timeType}
+          selectedDate={helpData.date}
+          selectedStartTime={helpData.startTime}
+          selectedEndTime={helpData.endTime}
           onTimeTypeSelect={handleTimeTypeSelect}
           onDateChange={handleDateChange}
           onStartTimeChange={handleStartTimeChange}
@@ -239,12 +210,10 @@ const CreateHelpPage: React.FC = () => {
 
       {currentStep === 3 && (
         <Step3HelpDetails
-          title={formData.title}
-          content={formData.content}
-          imageFiles={formData.imageFiles}
+          title={helpData.title}
+          content={helpData.content}
           onTitleChange={handleTitleChange}
           onContentChange={handleContentChange}
-          onImageChange={handleImageChange}
         />
       )}
 
@@ -260,12 +229,14 @@ const CreateHelpPage: React.FC = () => {
         {currentStep === 3 ? (
           <button
             className={`${styles.navButton} ${styles.navButtonPrimary} ${
-              !canGoNext() || isPending ? styles.navButtonDisabled : ''
+              !canGoNext() || isPending || isUploading
+                ? styles.navButtonDisabled
+                : ''
             }`}
             onClick={handleSubmit}
-            disabled={!canGoNext() || isPending}
+            disabled={!canGoNext() || isPending || isUploading}
           >
-            {isPending ? '생성 중...' : getButtonText()}
+            {isPending || isUploading ? '생성 중...' : getButtonText()}
           </button>
         ) : (
           <button

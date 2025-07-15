@@ -1,67 +1,94 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import Image from 'next/image';
 import styles from './ImageUploader.module.css';
+import { useImageContext } from '@/lib/contexts/ImageContext';
 
 interface ImageUploaderProps {
-  imageFiles: File[];
-  onImageChange: (files: File[]) => void;
   maxFiles?: number;
   maxFileSize?: number; // MB 단위
   className?: string;
 }
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({
-  imageFiles,
-  onImageChange,
   maxFiles = 5,
   maxFileSize = 5,
   className = '',
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { imageFiles, addImages, removeImage } = useImageContext();
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    const validFiles: File[] = [];
-
-    for (const file of files) {
-      // 파일 크기 체크
-      if (file.size > maxFileSize * 1024 * 1024) {
-        alert(`${file.name} 파일 크기는 ${maxFileSize}MB 이하여야 합니다.`);
-        continue;
-      }
-
-      // 이미지 파일 타입 체크
-      if (!file.type.startsWith('image/')) {
-        alert(`${file.name}은(는) 이미지 파일이 아닙니다.`);
-        continue;
-      }
-
-      validFiles.push(file);
-    }
-
-    if (validFiles.length > 0) {
-      const totalFiles = imageFiles.length + validFiles.length;
-      if (totalFiles > maxFiles) {
-        alert(`최대 ${maxFiles}개까지만 업로드할 수 있습니다.`);
-        return;
-      }
-      onImageChange([...imageFiles, ...validFiles]);
-    }
+    validateAndAddFiles(files);
   };
 
   const handleImageClick = () => {
     fileInputRef.current?.click();
   };
 
-  const removeImage = (index: number) => {
-    const newFiles = imageFiles.filter((_, i) => i !== index);
-    onImageChange(newFiles);
+  const handleRemoveImage = (index: number) => {
+    removeImage(index);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
   };
+
+  const validateAndAddFiles = useCallback(
+    (files: FileList | File[]) => {
+      const validFiles: File[] = [];
+
+      for (const file of files) {
+        // 파일 크기 체크
+        if (file.size > maxFileSize * 1024 * 1024) {
+          alert(`${file.name} 파일 크기는 ${maxFileSize}MB 이하여야 합니다.`);
+          continue;
+        }
+
+        // 이미지 파일 타입 체크
+        if (!file.type.startsWith('image/')) {
+          alert(`${file.name}은(는) 이미지 파일이 아닙니다.`);
+          continue;
+        }
+
+        validFiles.push(file);
+      }
+
+      if (validFiles.length > 0) {
+        const totalFiles = imageFiles.length + validFiles.length;
+        if (totalFiles > maxFiles) {
+          alert(`최대 ${maxFiles}개까지만 업로드할 수 있습니다.`);
+          return;
+        }
+        addImages(validFiles);
+      }
+    },
+    [imageFiles.length, maxFiles, maxFileSize, addImages]
+  );
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  }, []);
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragOver(false);
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        validateAndAddFiles(files);
+      }
+    },
+    [validateAndAddFiles]
+  );
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0B';
@@ -72,9 +99,18 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   };
 
   return (
-    <div className={`${styles.imageUploader} ${className}`}>
+    <div
+      className={`${styles.imageUploader} ${className}`}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
       {/* 이미지 업로드 영역 */}
-      <div className={styles.imageUploadArea}>
+      <div
+        className={`${styles.imageUploadArea} ${
+          isDragOver ? styles.dragOver : ''
+        }`}
+      >
         {/* 업로드된 이미지들 */}
         {imageFiles.map((file, index) => (
           <div key={index} className={styles.imageItem}>
@@ -87,7 +123,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                 className={styles.previewImage}
               />
               <button
-                onClick={() => removeImage(index)}
+                onClick={() => handleRemoveImage(index)}
                 className={styles.removeButton}
                 type='button'
                 aria-label='이미지 삭제'

@@ -16,8 +16,7 @@ export const postHelp = async (helpData: ApiCreateHelp) => {
 };
 
 export const postHelpImages = async (helpData: ApiCreateHelpImagesRequest) => {
-  const formData = new FormData();
-  helpData.imageFiles.map((file) => formData.append('file', file));
+  const formData = helpData.formData;
 
   const response = await apiClient.post<ApiCreateHelpImagesResponse>(
     API_ENDPOINTS.HELP_IMAGE,

@@ -7,19 +7,15 @@ import ImageUploader from './ImageUploader';
 interface Step3HelpDetailsProps {
   title: string;
   content: string;
-  imageFiles: File[];
   onTitleChange: (title: string) => void;
   onContentChange: (content: string) => void;
-  onImageChange: (files: File[]) => void;
 }
 
 const Step3HelpDetails: React.FC<Step3HelpDetailsProps> = ({
   title,
   content,
-  imageFiles,
   onTitleChange,
   onContentChange,
-  onImageChange,
 }) => {
   return (
     <div className={styles.stepContent}>
@@ -63,12 +59,7 @@ const Step3HelpDetails: React.FC<Step3HelpDetailsProps> = ({
 
         <div className={styles.formGroup}>
           <label className={styles.formLabel}>첨부할 이미지</label>
-          <ImageUploader
-            imageFiles={imageFiles}
-            onImageChange={onImageChange}
-            maxFiles={5}
-            maxFileSize={5}
-          />
+          <ImageUploader maxFiles={5} maxFileSize={5} />
         </div>
       </div>
     </div>

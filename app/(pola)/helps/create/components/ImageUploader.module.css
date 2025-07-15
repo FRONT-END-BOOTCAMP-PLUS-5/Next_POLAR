@@ -7,6 +7,14 @@
   flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 16px;
+  transition: all 0.3s ease;
+}
+
+.imageUploadArea.dragOver {
+  background-color: #f0f8ff;
+  border: 2px dashed #007aff;
+  border-radius: 8px;
+  padding: 8px;
 }
 
 .imageItem {
@@ -95,6 +103,18 @@
 .addImageButton:hover {
   border-color: #007aff;
   background-color: #f0f8ff;
+}
+
+.addImageButton.uploading {
+  border-color: #ff9500;
+  background-color: #fff8f0;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.addImageButton.uploading .addIcon,
+.addImageButton.uploading .addText {
+  color: #ff9500;
 }
 
 .addIcon {

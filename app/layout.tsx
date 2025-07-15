@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { gangwonEdu, pretendard } from '@/public/fonts/fonts';
 import './globals.css';
 import { QueryProvider } from '@/app/_components/QueryProvider';
+import { ImageProvider } from '@/lib/contexts/ImageContext';
 
 export const metadata: Metadata = {
   title: 'POLAR',
@@ -17,7 +18,9 @@ export default function RootLayout({
     <html lang='en'>
       <body className={`${gangwonEdu.variable} ${pretendard.variable}`}>
         <QueryProvider>
-          <main className='main-container'>{children}</main>
+          <ImageProvider>
+            <main className='main-container'>{children}</main>
+          </ImageProvider>
         </QueryProvider>
       </body>
     </html>
