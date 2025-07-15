@@ -1,0 +1,46 @@
+.stepContent {
+  margin-bottom: 40px;
+}
+
+.stepTitle {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.formSection {
+  margin-bottom: 30px;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formLabel {
+  display: block;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.textInput {
+  width: 94%;
+  border: 2px solid #e5e5ea;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+  resize: vertical;
+}
+
+.textInput:focus {
+  outline: none;
+  border-color: #007aff;
+}
+
+.textArea {
+  min-height: 120px;
+}

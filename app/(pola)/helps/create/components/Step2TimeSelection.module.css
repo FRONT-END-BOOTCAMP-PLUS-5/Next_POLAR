@@ -1,0 +1,118 @@
+.stepContent {
+  margin-bottom: 40px;
+}
+
+.stepTitle {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.timeSection {
+  margin-bottom: 30px;
+}
+
+.timeOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.timeOption {
+  border: 2px solid #e5e5ea;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: white;
+}
+
+.timeOption:hover {
+  border-color: #007aff;
+}
+
+.timeOptionSelected {
+  border-color: #007aff;
+  background-color: #f0f8ff;
+}
+
+.timeOptionLabel {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.timeOptionDescription {
+  font-size: 14px;
+  color: #666;
+}
+
+.dateTimeInputs {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inputLabel {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+}
+
+.input {
+  border: 2px solid #e5e5ea;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #007aff;
+}
+
+.timeGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.timeSlot {
+  border: 1px solid #e5e5ea;
+  border-radius: 8px;
+  padding: 8px;
+  text-align: center;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: white;
+}
+
+.timeSlot:hover {
+  border-color: #007aff;
+  background-color: #f0f8ff;
+}
+
+.timeSlotSelected {
+  border-color: #007aff;
+  background-color: #007aff;
+  color: white;
+}
+
+.timeSlotDisabled {
+  background-color: #f2f2f7;
+  color: #c7c7cc;
+  cursor: not-allowed;
+}

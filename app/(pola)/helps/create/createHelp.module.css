@@ -1,0 +1,134 @@
+.container {
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #666;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 1;
+}
+
+.stepIndicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+  gap: 8px;
+}
+
+.step {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.stepActive {
+  background-color: #007aff;
+  color: white;
+}
+
+.stepCompleted {
+  background-color: #34c759;
+  color: white;
+}
+
+.stepInactive {
+  background-color: #e5e5ea;
+  color: #8e8e93;
+}
+
+.stepLine {
+  width: 40px;
+  height: 2px;
+  background-color: #e5e5ea;
+  transition: background-color 0.3s ease;
+}
+
+.stepLineActive {
+  background-color: #007aff;
+}
+
+.stepLineCompleted {
+  background-color: #34c759;
+}
+
+.navigation {
+  display: flex;
+  gap: 12px;
+  padding: 20px;
+  background-color: white;
+  border-top: 1px solid #e5e5ea;
+}
+
+.navButton {
+  flex: 1;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.navButtonSecondary {
+  background-color: #f2f2f7;
+  color: #666;
+}
+
+.navButtonSecondary:hover {
+  background-color: #e5e5ea;
+}
+
+.navButtonPrimary {
+  background-color: #007aff;
+  color: white;
+}
+
+.navButtonPrimary:hover {
+  background-color: #0056cc;
+}
+
+.navButtonDisabled {
+  background-color: #e5e5ea;
+  color: #c7c7cc;
+  cursor: not-allowed;
+}
+
+.navButtonDisabled:hover {
+  background-color: #e5e5ea;
+}

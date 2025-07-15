@@ -9,6 +9,7 @@ export class SeniorHelp {
     public id?: number,
     public status?: string,
     public createdAt?: string,
-    public updatedAt?: string
+    public updatedAt?: string,
+    public imageFiles?: string[] // 이미지 URL 배열 추가
   ) {}
 }

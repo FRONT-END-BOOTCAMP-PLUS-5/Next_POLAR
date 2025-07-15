@@ -1,12 +1,14 @@
 reviews:
   # 자동 리뷰를 허용할 브랜치 목록
-  branches:
-    include:
-      - main
-      - develop
-      - feat/*
-      - refactor/*
-      - bug/*
+
+  review_status: true
+
+  base_branches:
+    - main
+    - develop
+    - feat/*
+    - refactor/*
+    - bug/*
 
   # 리뷰 룰 설정 (원하는 대로 조정 가능)
   rules:

@@ -1,0 +1,77 @@
+.stepContent {
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.stepTitle {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.optionGrid {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.optionCard {
+  border: 2px solid #e5e5ea;
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: white;
+}
+
+.optionCard:hover {
+  border-color: #007aff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.1);
+}
+
+.optionCardSelected {
+  border-color: #007aff;
+  background-color: #f0f8ff;
+}
+
+.optionHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.optionIcon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 16px;
+}
+
+.optionIconHeavy {
+  background-color: #ffd700;
+  color: #333;
+}
+
+.optionIconDifficult {
+  background-color: #ff6b6b;
+  color: white;
+}
+
+.optionLabel {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.optionDescription {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.4;
+}
