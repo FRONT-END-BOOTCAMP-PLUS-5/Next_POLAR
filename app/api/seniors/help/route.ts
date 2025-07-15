@@ -13,6 +13,9 @@ export async function POST(req: NextRequest) {
   // const { nickname, age } = userData || {};
   const nickname = 'grape9133';
 
+  const body = await req.json();
+
+
   if (!nickname) {
     return NextResponse.json(
       { error: '로그인이 필요합니다.' },
