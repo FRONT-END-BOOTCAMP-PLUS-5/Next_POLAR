@@ -5,6 +5,7 @@ export interface CreateSeniorHelpRequestDto {
   content?: string;
   category: number | number[];
   endDate?: string;
+  imageFiles?: string[]; // 이미지 URL 배열 추가
 }
 
 // 시니어 헬프 수정 요청 DTO (닉네임 기반)

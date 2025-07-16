@@ -1,17 +1,9 @@
-export class ScoreRequestDtoWithUserId {
-  constructor(public readonly userId: number) {}
-}
-
 export class ScoreRequestDtoWithCategoryId {
   constructor(public readonly categoryId: number) {}
 }
 
 export class ScoreRequestDtoWithSeason {
   constructor(public readonly season: number) {}
-}
-
-export class ScoreRequestDtoWithUserIdAndSeason {
-  constructor(public readonly userId: number, public readonly season: number) {}
 }
 
 export class ScoreRequestDtoWithCategoryIdAndSeason {
@@ -21,9 +13,20 @@ export class ScoreRequestDtoWithCategoryIdAndSeason {
   ) {}
 }
 
-export class ScoreRequestDtoWithUserIdAndCategoryId {
+export class ScoreRequestDtoWithNickname {
+  constructor(public readonly nickname: string) {}
+}
+
+export class ScoreRequestDtoWithNicknameAndSeason {
   constructor(
-    public readonly userId: number,
+    public readonly nickname: string,
+    public readonly season: number
+  ) {}
+}
+
+export class ScoreRequestDtoWithNicknameAndCategoryId {
+  constructor(
+    public readonly nickname: string,
     public readonly categoryId: number
   ) {}
 }

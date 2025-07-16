@@ -18,9 +18,9 @@ import {
   ScoreRequestDtoWithCategoryId,
   ScoreRequestDtoWithCategoryIdAndSeason,
   ScoreRequestDtoWithSeason,
-  ScoreRequestDtoWithUserId,
-  ScoreRequestDtoWithUserIdAndCategoryId,
-  ScoreRequestDtoWithUserIdAndSeason,
+  ScoreRequestDtoWithNickname,
+  ScoreRequestDtoWithNicknameAndSeason,
+  ScoreRequestDtoWithNicknameAndCategoryId,
 } from '@/backend/juniors/scores/applications/dtos/ScoreRequestDto';
 
 export class ScoreRepository implements ScoreRepositoryInterface {
@@ -39,13 +39,7 @@ export class ScoreRepository implements ScoreRepositoryInterface {
         point
       )
       `;
-    // eq 반복 방식
-    // let query = supabase.from('scores').select(scoreColumns);
-    // for (const [key, value] of Object.entries(filters)) {
-    //   query = query.eq(key, value);
-    // }
 
-    // match 방식 (여러 조건 동시 필터링)
     const { data, error } = await supabase
       .from('scores')
       .select(scoreColumns)
@@ -58,10 +52,43 @@ export class ScoreRepository implements ScoreRepositoryInterface {
     } as unknown as ScoreDBResponse);
   }
 
-  async getScoresByUserId(
-    request: ScoreRequestDtoWithUserId
+  // nickname 기반 조회를 위한 메서드 (JOIN 사용)
+  private async queryScoresByNickname(
+    nickname: string,
+    additionalFilters: Record<string, number | string> = {}
   ): Promise<Score[]> {
-    return this.queryScores({ user_id: request.userId });
+    const scoreColumns = `
+      user_id,
+      users!inner(nickname),
+      category_id,
+      season,
+      category_score,
+      updated_at,
+      categories (
+        id,
+        name,
+        point
+      )
+    `;
+
+    // nickname으로 scores 조회 (JOIN 사용)
+    let query = supabase
+      .from('scores')
+      .select(scoreColumns)
+      .eq('users.nickname', nickname);
+
+    // 추가 필터 적용
+    for (const [key, value] of Object.entries(additionalFilters)) {
+      query = query.eq(key, value);
+    }
+
+    const { data, error } = await query;
+
+    if (error || !data) return [];
+
+    return ScoreMapper.toScoreEntity({
+      scores: data,
+    } as unknown as ScoreDBResponse);
   }
 
   async getScoresByCategoryId(
@@ -76,15 +103,6 @@ export class ScoreRepository implements ScoreRepositoryInterface {
     return this.queryScores({ season: request.season });
   }
 
-  async getScoresByUserIdAndSeason(
-    request: ScoreRequestDtoWithUserIdAndSeason
-  ): Promise<Score[]> {
-    return this.queryScores({
-      user_id: request.userId,
-      season: request.season,
-    });
-  }
-
   async getScoresByCategoryIdAndSeason(
     request: ScoreRequestDtoWithCategoryIdAndSeason
   ): Promise<Score[]> {
@@ -94,11 +112,25 @@ export class ScoreRepository implements ScoreRepositoryInterface {
     });
   }
 
-  async getScoresByUserIdAndCategoryId(
-    request: ScoreRequestDtoWithUserIdAndCategoryId
+  // nickname 기반 메서드들
+  async getScoresByNickname(
+    request: ScoreRequestDtoWithNickname
   ): Promise<Score[]> {
-    return this.queryScores({
-      user_id: request.userId,
+    return this.queryScoresByNickname(request.nickname);
+  }
+
+  async getScoresByNicknameAndSeason(
+    request: ScoreRequestDtoWithNicknameAndSeason
+  ): Promise<Score[]> {
+    return this.queryScoresByNickname(request.nickname, {
+      season: request.season,
+    });
+  }
+
+  async getScoresByNicknameAndCategoryId(
+    request: ScoreRequestDtoWithNicknameAndCategoryId
+  ): Promise<Score[]> {
+    return this.queryScoresByNickname(request.nickname, {
       category_id: request.categoryId,
     });
   }

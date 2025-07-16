@@ -8,7 +8,13 @@ export class SeniorHelpMapper {
       dto.startDate,
       dto.content ?? '',
       dto.category,
-      dto.endDate
+      dto.endDate,
+      undefined,
+      undefined,
+      'open',
+      undefined,
+      undefined,
+      dto.imageFiles ?? []
     );
   }
 }

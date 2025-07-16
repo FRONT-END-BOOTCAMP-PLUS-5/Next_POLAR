@@ -1,13 +1,20 @@
 import { GetUserScoresUseCase } from '@/backend/juniors/scores/applications/usecases/ScoreUseCases';
 import { ScoreRepository } from '@/backend/juniors/scores/infrastructures/repositories/ScoreRepository';
-import { getAuthenticatedUser } from '@/lib/auth';
+import { getNicknameFromCookie } from '@/lib/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
-  const authResult = getAuthenticatedUser(req);
-  // 미사용 변수 주석처리
-  const userId = authResult.user?.id as number;
+  // 쿠키에서 nickname 추출
+  const userData = getNicknameFromCookie(req);
+  const { nickname } = userData || {};
   const categoryId = Number(req.nextUrl.searchParams.get('categoryId'));
+
+  if (!nickname) {
+    return NextResponse.json(
+      { error: '로그인이 필요합니다.' },
+      { status: 401 }
+    );
+  }
 
   if (!categoryId) {
     return NextResponse.json(
@@ -25,8 +32,8 @@ export async function GET(req: NextRequest) {
 
   try {
     const scoreUseCase = new GetUserScoresUseCase(new ScoreRepository());
-    const scores = await scoreUseCase.executeByUserIdAndCategoryId({
-      userId,
+    const scores = await scoreUseCase.executeByNicknameAndCategoryId({
+      nickname,
       categoryId,
     });
     return NextResponse.json(scores, { status: 200 });

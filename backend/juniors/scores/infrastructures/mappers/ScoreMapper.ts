@@ -8,8 +8,11 @@ import {
 export class ScoreMapper {
   static toScoreEntity({ scores }: ScoreDBResponse) {
     return scores.map((score: ScoreDBResponseSingle) => {
+      // nickname이 직접 있거나 users.nickname에서 가져오기
+      const nickname = score.nickname || score.users?.nickname || '';
+
       return new Score(
-        score.user_id,
+        nickname,
         score.category_id,
         score.season,
         score.category_score,
