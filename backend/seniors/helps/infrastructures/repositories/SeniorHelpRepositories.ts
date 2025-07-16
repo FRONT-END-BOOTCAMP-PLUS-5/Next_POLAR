@@ -28,16 +28,36 @@ function normalizeCategoryIds(category: CategoryInput): number[] {
 
 // 카테고리 관계 생성 함수
 async function createHelpCategories(helpId: number, categoryIds: number[]) {
+  console.log(
+    `[createHelpCategories] 카테고리 관계 생성 시작 - HelpId: ${helpId}, CategoryIds: ${JSON.stringify(
+      categoryIds
+    )}`
+  );
+
   const categoryData = categoryIds.map((categoryId) => ({
     help_id: helpId,
     category_id: categoryId,
   }));
 
-  const { error } = await supabase.from('help_categories').insert(categoryData);
+  console.log(
+    `[createHelpCategories] 삽입할 데이터: ${JSON.stringify(categoryData)}`
+  );
+
+  const { data, error } = await supabase
+    .from('help_categories')
+    .insert(categoryData)
+    .select();
 
   if (error) {
+    console.error(`[createHelpCategories] 카테고리 관계 생성 실패:`, error);
     handleSupabaseError(error, '카테고리 관계 생성');
   }
+
+  console.log(
+    `[createHelpCategories] 카테고리 관계 생성 성공 - HelpId: ${helpId}, 삽입된 데이터: ${JSON.stringify(
+      data
+    )}`
+  );
 }
 
 // 카테고리 관계 삭제 함수
@@ -76,6 +96,7 @@ export class SeniorHelpRepository implements ISeniorHelpRepositoryInterface {
           start_date: help.startDate,
           end_date: help.endDate,
           content: help.content,
+          status: help.status,
         },
       ])
       .select('id')
@@ -92,10 +113,53 @@ export class SeniorHelpRepository implements ISeniorHelpRepositoryInterface {
 
     try {
       // 2. 카테고리 관계 생성
+      console.log(
+        `[SeniorHelpRepository] 카테고리 처리 시작 - 원본 category: ${JSON.stringify(
+          help.category
+        )}`
+      );
       const categoryIds = normalizeCategoryIds(help.category);
+      console.log(
+        `[SeniorHelpRepository] 정규화된 categoryIds: ${JSON.stringify(
+          categoryIds
+        )}`
+      );
       await createHelpCategories(helpId, categoryIds);
+
+      // 3. 이미지 URL들이 있다면 help_images 테이블에 저장
+      if (help.imageFiles && help.imageFiles.length > 0) {
+        console.log(
+          `[SeniorHelpRepository] 이미지 URL들 저장 시작 - HelpId: ${helpId}, 개수: ${help.imageFiles.length}`
+        );
+
+        const imageRecords = help.imageFiles.map((imageUrl) => ({
+          help_id: helpId,
+          image_url: imageUrl,
+        }));
+
+        const { error: imageError } = await supabase
+          .from('help_images')
+          .insert(imageRecords);
+
+        if (imageError) {
+          console.error(
+            '[SeniorHelpRepository] 이미지 URL들 저장 실패:',
+            imageError
+          );
+          // 이미지 저장 실패 시 help와 카테고리도 삭제 (롤백)
+          await supabase.from('help_categories').delete().eq('help_id', helpId);
+          await supabase.from('helps').delete().eq('id', helpId);
+          throw new Error(
+            `이미지 URL들 저장에 실패했습니다: ${imageError.message}`
+          );
+        }
+
+        console.log(
+          `[SeniorHelpRepository] 이미지 URL들 저장 성공 - HelpId: ${helpId}, 저장된 개수: ${help.imageFiles.length}`
+        );
+      }
     } catch (error) {
-      // 카테고리 관계 생성 실패 시 help도 삭제 (롤백)
+      // 카테고리 관계 생성 또는 이미지 저장 실패 시 help도 삭제 (롤백)
       await supabase.from('helps').delete().eq('id', helpId);
       throw error;
     }
