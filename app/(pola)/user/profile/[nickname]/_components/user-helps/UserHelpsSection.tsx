@@ -11,6 +11,8 @@ import {
   Legend,
 } from "chart.js";
 import styles from "./userHelps.module.css";
+import HelpListCard from "@/app/_components/commons/list-card/HelpListCard";
+import type { HelpListResponseDto } from "@/backend/helps/applications/dtos/HelpDTO";
 
 Chart.register(
   RadialLinearScale,
@@ -91,6 +93,58 @@ const UserHelpsSection: React.FC<UserHelpsSectionProps> = ({
     ],
   };
 
+  // 더미 데이터
+  const dummyHelps: HelpListResponseDto[] = [
+    {
+      id: 1,
+      seniorInfo: {
+        nickname: "hawaiiKing",
+        name: "하와이킹",
+        profileImgUrl:
+          "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=facearea&w=256&h=256&q=80",
+      },
+      title: "하와이 특가 7일 퀸 카피올라니 호텔",
+      startDate: new Date("2024-11-25"),
+      endDate: new Date("2024-12-01"),
+      category: 3,
+      content: "하와이 여행 및 관광",
+      status: "완료",
+      createdAt: new Date("2024-10-01"),
+    },
+    {
+      id: 2,
+      seniorInfo: {
+        nickname: "cleanMaster",
+        name: "청소왕",
+        profileImgUrl:
+          "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=facearea&w=256&h=256&q=80",
+      },
+      title: "대청소 도우미 모집",
+      startDate: new Date("2024-08-10"),
+      endDate: new Date("2024-08-10"),
+      category: 1,
+      content: "여름맞이 대청소",
+      status: "완료",
+      createdAt: new Date("2024-07-20"),
+    },
+    {
+      id: 3,
+      seniorInfo: {
+        nickname: "cookQueen",
+        name: "요리여왕",
+        profileImgUrl:
+          "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=facearea&w=256&h=256&q=80",
+      },
+      title: "쿠킹 클래스 & 점심 제공",
+      startDate: new Date("2024-09-05"),
+      endDate: new Date("2024-09-05"),
+      category: 2,
+      content: "함께 요리하고 식사해요",
+      status: "완료",
+      createdAt: new Date("2024-08-15"),
+    },
+  ];
+
   return (
     <section className={styles.userHelpsSection}>
       <div className={styles.userHelpsTitleContainer}>
@@ -118,7 +172,11 @@ const UserHelpsSection: React.FC<UserHelpsSectionProps> = ({
         </div>
       </div>
 
-      <div className={styles.userHelpList}></div>
+      <div className={styles.userHelpList}>
+        {dummyHelps.map((help) => (
+          <HelpListCard key={help.id} help={help} />
+        ))}
+      </div>
     </section>
   );
 };

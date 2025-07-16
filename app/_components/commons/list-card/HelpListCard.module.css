@@ -1,0 +1,129 @@
+.card {
+  display: flex;
+  align-items: stretch;
+  background: #fff;
+  border-radius: 1.2rem;
+  width: 100%;
+  box-shadow: 0 0.25rem 1.5rem rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  min-height: 7rem;
+  transition: box-shadow 0.2s;
+  cursor: pointer;
+}
+.card:hover {
+  box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.16);
+}
+
+.thumbnail {
+  flex: 0 0 6.25rem;
+  width: 6.25rem;
+  height: 6.25rem;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1rem;
+  overflow: hidden;
+  margin: 0.625rem;
+}
+.thumbnail img,
+.thumbnailImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.8rem;
+}
+
+.info {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.875rem 1.125rem 0.875rem 0;
+  min-width: 0;
+  position: relative;
+}
+.topRow {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 0.3em;
+}
+.status {
+  font-size: 1.08rem;
+  color: #2d7cff;
+  font-weight: 700;
+  margin-left: auto;
+  letter-spacing: 0.01em;
+}
+.title {
+  font-size: 1.15rem;
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 0.4em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.subInfo {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 0.25rem;
+  font-size: 1rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+.nickname {
+  font-weight: 500;
+  color: #444;
+  flex-shrink: 0;
+  margin-right: 0.5rem;
+  line-height: 1;
+  text-align: center;
+}
+.date {
+  font-size: 1rem;
+  color: #222;
+  font-weight: 700;
+  background: linear-gradient(90deg, #e0eafc 0%, #cfdef3 100%);
+  border-radius: 0.75rem;
+  padding: 0 0.5rem;
+  min-width: 10rem;
+  text-align: center;
+  margin-right: auto;
+  margin-left: 0;
+}
+.reward {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffb300;
+  background: linear-gradient(90deg, #fffbe6 0%, #ffe9b3 100%);
+  border-radius: 0.75rem;
+  padding: 0 0.75rem;
+  min-width: 6rem;
+  text-align: right;
+  margin-left: 0.5rem;
+  flex-shrink: 0;
+}
+.rewardWrapper {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .card {
+    min-height: 5.5rem;
+  }
+  .thumbnail {
+    width: 4.4rem;
+    height: 4.4rem;
+    margin: 0.45rem;
+  }
+  .info {
+    padding: 0.6rem 0.6rem 0.6rem 0;
+  }
+  .title {
+    font-size: 1rem;
+  }
+}

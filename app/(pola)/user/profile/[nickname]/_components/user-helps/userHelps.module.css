@@ -1,6 +1,8 @@
 .userHelpsSection {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 1rem;
   width: 100%;
 }
 
@@ -30,9 +32,10 @@
 .userHelpsContentContainer {
   display: flex;
   align-items: center;
-  max-width: 100%;
+  padding: 1rem;
+  width: calc(100% - 2rem);
   background-color: #fff;
-  border-radius: 0.5rem;
+  border-radius: 1rem;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
 }
 
@@ -52,7 +55,6 @@
   align-items: center;
   padding: 0.5rem;
   width: calc(50% - 1rem);
-  height: calc(100% - 1rem);
   border-right: 1px solid #d9d9d9;
 }
 
@@ -103,6 +105,10 @@
 }
 
 .userHelpList {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 /* 반응형 디자인 */

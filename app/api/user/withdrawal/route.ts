@@ -20,19 +20,19 @@ export async function POST(req: NextRequest) {
     if (reason) {
       console.log(`회원 탈퇴 사유: ${reason}`);
     }
-
+    
     const userRepository = new SbWithdrawalUserRepository();
     const usecase = new UserWithdrawalUseCase(userRepository);
-
+    
     const result = await usecase.execute(userId);
-
+    
     return NextResponse.json(result, { status: 200 });
   } catch (e: unknown) {
     // 에러 타입 검증
     if (e instanceof Error) {
-      return NextResponse.json(
-        { success: false, error: e.message },
-        { status: 400 }
+    return NextResponse.json(
+      { success: false, error: e.message },
+      { status: 400 }
       );
     }
 

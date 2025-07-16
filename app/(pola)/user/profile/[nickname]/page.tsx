@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import UserInfoSection from "@/app/_components/commons/common-sections/user-info/UserInfoSection";
 import UserTierSection from "@/app/_components/sections/user-tier/UserTierSection";
 import UserArchivmentSection from "@/app/_components/sections/user-archivment/UserArchivmentSection";
-import UserHelpsSection from "@/app/_components/sections/user-helps/UserHelpsSection";
+import UserHelpsSection from "@/app/(pola)/user/profile/[nickname]/_components/user-helps/UserHelpsSection";
 import ProfileMenuSection from "./_components/sections/ProfileMenuSection";
 
 const UserProfilePage: React.FC = () => {
