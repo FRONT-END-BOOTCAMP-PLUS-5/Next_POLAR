@@ -1,31 +1,22 @@
 import { GetUserScoresUseCase } from '@/backend/juniors/scores/applications/usecases/ScoreUseCases';
 import { ScoreRepository } from '@/backend/juniors/scores/infrastructures/repositories/ScoreRepository';
-import { getNicknameFromCookie } from '@/lib/jwt';
+import { extractNicknameForScoreAccess } from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
-  // 쿠키에서 nickname 추출
-  const userData = getNicknameFromCookie(req);
-  const { nickname } = userData || {};
+  // 공통 함수로 nickname 추출 및 권한 검증
+  const result = extractNicknameForScoreAccess(req);
+
+  if (result.error) {
+    const status = result.isOwnData ? 401 : 403;
+    return NextResponse.json({ error: result.error }, { status });
+  }
+
+  // categoryId 파라미터 검증
   const categoryId = Number(req.nextUrl.searchParams.get('categoryId'));
-
-  if (!nickname) {
+  if (!categoryId || isNaN(categoryId)) {
     return NextResponse.json(
-      { error: '로그인이 필요합니다.' },
-      { status: 401 }
-    );
-  }
-
-  if (!categoryId) {
-    return NextResponse.json(
-      { error: 'categoryId가 필요합니다.' },
-      { status: 400 }
-    );
-  }
-
-  if (isNaN(categoryId)) {
-    return NextResponse.json(
-      { error: '유효하지 않은 categoryId입니다.' },
+      { error: '유효한 categoryId가 필요합니다.' },
       { status: 400 }
     );
   }
@@ -33,7 +24,7 @@ export async function GET(req: NextRequest) {
   try {
     const scoreUseCase = new GetUserScoresUseCase(new ScoreRepository());
     const scores = await scoreUseCase.executeByNicknameAndCategoryId({
-      nickname,
+      nickname: result.nickname,
       categoryId,
     });
     return NextResponse.json(scores, { status: 200 });
