@@ -79,3 +79,11 @@
     text-decoration: none;
   }
 }
+
+.errorMessage {
+  color: #ff4444;
+  text-align: center;
+  margin-top: 0.625rem;
+  font-size: 0.875rem;
+  font-family: var(--font-pretendard);
+}
