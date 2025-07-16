@@ -58,7 +58,20 @@ const UserProfilePage: React.FC = () => {
         ]}
       />
 
-      <UserHelpsSection />
+      <UserHelpsSection
+        title="나의 헬프 기록"
+        nickname={params.nickname as string}
+        chartLabels={["청소", "요리", "운전", "상담", "기타"]}
+        chartData={[90, 70, 80, 60, 50]}
+        representativeTitle="환경미화원"
+        helpCategories={[
+          { name: "청소", points: 1200000 },
+          { name: "요리", points: 800000 },
+          { name: "운전", points: 600000 },
+          { name: "상담", points: 400000 },
+          { name: "기타", points: 200000 },
+        ]}
+      />
 
       <ProfileMenuSection
         nickname={nickname}

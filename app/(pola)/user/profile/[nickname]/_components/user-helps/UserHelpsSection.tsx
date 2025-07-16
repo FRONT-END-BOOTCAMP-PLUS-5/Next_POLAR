@@ -30,26 +30,20 @@ interface HelpCategory {
 
 interface UserHelpsSectionProps {
   title?: string;
-  moreLink?: string;
+  nickname: string;
   chartLabels?: string[];
   chartData?: number[];
   representativeTitle?: string;
-  helpCategories?: HelpCategory[];
+  helpCategories: HelpCategory[];
 }
 
 const UserHelpsSection: React.FC<UserHelpsSectionProps> = ({
-  title = "헬프 기록",
-  moreLink = "/user/profile/achievement",
-  chartLabels = ["청소", "요리", "운전", "상담", "기타"],
-  chartData = [80, 65, 90, 70, 60],
-  representativeTitle = "환경미화원",
-  helpCategories = [
-    { name: "청소", points: 1000000 },
-    { name: "청소", points: 1000000 },
-    { name: "청소", points: 1000000 },
-    { name: "청소", points: 1000000 },
-    { name: "청소", points: 1000000 },
-  ],
+  title,
+  nickname,
+  chartLabels,
+  chartData,
+  representativeTitle,
+  helpCategories,
 }) => {
   const chartOptions = {
     responsive: true,
@@ -98,37 +92,21 @@ const UserHelpsSection: React.FC<UserHelpsSectionProps> = ({
     {
       id: 1,
       seniorInfo: {
-        nickname: "hawaiiKing",
-        name: "하와이킹",
-        profileImgUrl:
-          "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=facearea&w=256&h=256&q=80",
-      },
-      title: "하와이 특가 7일 퀸 카피올라니 호텔",
-      startDate: new Date("2024-11-25"),
-      endDate: new Date("2024-12-01"),
-      category: 3,
-      content: "하와이 여행 및 관광",
-      status: "완료",
-      createdAt: new Date("2024-10-01"),
-    },
-    {
-      id: 2,
-      seniorInfo: {
         nickname: "cleanMaster",
         name: "청소왕",
         profileImgUrl:
           "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=facearea&w=256&h=256&q=80",
       },
-      title: "대청소 도우미 모집",
+      title: "여름맞이 대청소 도우미 모집",
       startDate: new Date("2024-08-10"),
       endDate: new Date("2024-08-10"),
       category: 1,
-      content: "여름맞이 대청소",
+      content: "여름철 대청소를 함께해요!",
       status: "완료",
       createdAt: new Date("2024-07-20"),
     },
     {
-      id: 3,
+      id: 2,
       seniorInfo: {
         nickname: "cookQueen",
         name: "요리여왕",
@@ -139,9 +117,25 @@ const UserHelpsSection: React.FC<UserHelpsSectionProps> = ({
       startDate: new Date("2024-09-05"),
       endDate: new Date("2024-09-05"),
       category: 2,
-      content: "함께 요리하고 식사해요",
-      status: "완료",
+      content: "함께 요리하고 식사해요!",
+      status: "모집중",
       createdAt: new Date("2024-08-15"),
+    },
+    {
+      id: 3,
+      seniorInfo: {
+        nickname: "driveHero",
+        name: "운전영웅",
+        profileImgUrl:
+          "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=facearea&w=256&h=256&q=80",
+      },
+      title: "병원 동행 운전 봉사",
+      startDate: new Date("2024-10-01"),
+      endDate: new Date("2024-10-01"),
+      category: 3,
+      content: "병원까지 안전하게 모셔다드려요.",
+      status: "진행중",
+      createdAt: new Date("2024-09-20"),
     },
   ];
 
@@ -150,7 +144,7 @@ const UserHelpsSection: React.FC<UserHelpsSectionProps> = ({
       <div className={styles.userHelpsTitleContainer}>
         <h2>{title}</h2>
         <div className={styles.userArchiveSectionTitleButton}>
-          <Link href={moreLink}>더보기</Link>
+          <Link href={`/user/profile/${nickname}/helps`}>더보기</Link>
         </div>
       </div>
       <div className={styles.userHelpsContentContainer}>
