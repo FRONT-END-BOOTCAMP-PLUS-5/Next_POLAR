@@ -4,14 +4,15 @@ import {
 } from '@/backend/seniors/helps/applications/dtos/SeniorRequest';
 import { SeniorHelpUseCase } from '@/backend/seniors/helps/applications/usecases/SeniorHelpUseCases';
 import { SeniorHelpRepository } from '@/backend/seniors/helps/infrastructures/repositories/SeniorHelpRepositories';
+import { UploadHelpImageUseCase } from '@/backend/images/applications/usecases/ImageUseCase';
+import { SbImageRepository } from '@/backend/images/infrastructures/repositories/SbImageRepository';
 import { getNicknameFromCookie } from '@/lib/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
-// 시니어 헬프 생성 API (닉네임 기반)
+// 시니어 헬프 생성 API (FormData 처리, 트랜잭션 포함)
 export async function POST(req: NextRequest) {
-  // const userData = getNicknameFromCookie(req);
-  // const { nickname, age } = userData || {};
-  const nickname = 'grape9133';
+  const userData = getNicknameFromCookie(req);
+  const { nickname } = userData || {};
 
   if (!nickname) {
     return NextResponse.json(
@@ -20,37 +21,86 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  let body;
   try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json(
-      { error: '잘못된 JSON 형식입니다.' },
-      { status: 400 }
-    );
-  }
+    const formData = await req.formData();
 
-  // 필수 필드 검증
-  if (!body.title || !body.startDate || !body.category) {
-    return NextResponse.json(
-      { error: '필수 필드가 누락되었습니다. (title, startDate, category)' },
-      { status: 400 }
-    );
-  }
+    // FormData에서 help 데이터 추출
+    const title = formData.get('title') as string;
+    const content = formData.get('content') as string;
+    const category = Number(formData.get('category'));
+    const startDate = formData.get('startDate') as string;
+    const endDate = formData.get('endDate') as string;
 
-  const helpReqCreate: CreateSeniorHelpRequestDto = {
-    title: body.title,
-    content: body.content || '',
-    category: body.category,
-    startDate: body.startDate,
-    endDate: body.endDate,
-    imageFiles: body.imageFiles || [], // 이미지 URL 배열 추가
-  };
+    // 필수 필드 검증
+    if (!title || !startDate || !category) {
+      return NextResponse.json(
+        { error: '필수 필드가 누락되었습니다. (title, startDate, category)' },
+        { status: 400 }
+      );
+    }
 
-  try {
+    // 이미지 파일들 추출
+    const imageFiles: File[] = [];
+    const imageFilesData = formData.getAll('imageFiles');
+    imageFilesData.forEach((item) => {
+      if (item instanceof File) {
+        imageFiles.push(item);
+      }
+    });
+
+    // 트랜잭션 시작: 이미지 업로드 + help 생성
+    const imageRepository = new SbImageRepository();
+    const uploadUseCase = new UploadHelpImageUseCase(imageRepository);
     const seniorHelpUseCase = new SeniorHelpUseCase(new SeniorHelpRepository());
-    const help = await seniorHelpUseCase.createHelp(nickname, helpReqCreate);
-    return NextResponse.json(help, { status: 201 });
+
+    let uploadedImageUrls: string[] = [];
+
+    try {
+      // 1. 이미지 파일들 업로드
+      if (imageFiles.length > 0) {
+        const uploadPromises = imageFiles.map(async (file) => {
+          const result = await uploadUseCase.execute(file, nickname);
+          return result.url;
+        });
+        uploadedImageUrls = await Promise.all(uploadPromises);
+        console.log('업로드된 이미지 URLs:', uploadedImageUrls);
+      }
+
+      // 2. Help 생성
+      const helpReqCreate: CreateSeniorHelpRequestDto = {
+        title,
+        content: content || '',
+        category,
+        startDate,
+        endDate,
+        imageFiles: uploadedImageUrls,
+      };
+
+      const help = await seniorHelpUseCase.createHelp(nickname, helpReqCreate);
+
+      console.log('Help 생성 성공:', help);
+      return NextResponse.json(help, { status: 201 });
+    } catch (error) {
+      // 트랜잭션 실패 시 업로드된 이미지들 삭제
+      console.error(
+        'Help 생성 중 오류 발생, 업로드된 이미지들 삭제 중:',
+        error
+      );
+
+      if (uploadedImageUrls.length > 0) {
+        try {
+          const deletePromises = uploadedImageUrls.map(async (url) => {
+            await imageRepository.deleteImage(url, 'help-images');
+          });
+          await Promise.all(deletePromises);
+          console.log('업로드된 이미지들 삭제 완료');
+        } catch (deleteError) {
+          console.error('이미지 삭제 중 오류:', deleteError);
+        }
+      }
+
+      throw error;
+    }
   } catch (error) {
     console.error('Help 생성 중 오류:', error);
     return NextResponse.json(

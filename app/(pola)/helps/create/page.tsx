@@ -7,7 +7,6 @@ import Step1HelpType from './components/Step1HelpType';
 import Step2TimeSelection from './components/Step2TimeSelection';
 import Step3HelpDetails from './components/Step3HelpDetails';
 import { useCreateHelp } from '@/lib/hooks/useCreateHelp';
-import { useImageUpload } from '@/lib/hooks/useImageUpload';
 import { useImageContext } from '@/lib/contexts/ImageContext';
 import { HelpFunnelData } from '@/lib/models/createHelpDto';
 
@@ -27,8 +26,7 @@ const CreateHelpPage: React.FC = () => {
     imageFiles: [],
   });
   const { mutateAsync, isPending } = useCreateHelp();
-  const { uploadCurrentImages, isUploading } = useImageUpload();
-  const { imageFiles } = useImageContext();
+  const { imageFiles, clearImages } = useImageContext();
 
   const handleTypeSelect = (type: string) => {
     setHelpData((prev) => ({ ...prev, type }));
@@ -96,49 +94,42 @@ const CreateHelpPage: React.FC = () => {
   const handleSubmit = async () => {
     if (!canGoNext()) return;
 
-    let uploadedImageUrls: string[] = [];
-
     try {
-      // 1. 이미지가 있다면 먼저 업로드
-      if (imageFiles.length > 0) {
-        uploadedImageUrls = await uploadCurrentImages();
-        console.log('업로드된 이미지 URLs:', uploadedImageUrls);
-      }
+      // FormData 생성하여 이미지 파일들과 help 데이터를 함께 전송
+      const formData = new FormData();
 
-      // 2. 도움 요청 생성
-      const helpFormData = {
-        title: helpData.title,
-        content: helpData.content,
-        category: helpData.type === 'heavy' ? 1 : 2, // 무거워요: 1, 어려워요: 2
-        startDate:
-          helpData.timeType === 'now'
-            ? new Date().toISOString()
-            : `${helpData.date}T${helpData.startTime}:00`,
-        endDate:
-          helpData.timeType === 'now'
-            ? new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString() // 2시간 후
-            : `${helpData.date}T${helpData.endTime}:00`,
-        imageFiles: uploadedImageUrls, // 업로드된 이미지 URL 배열
-      };
+      // help 데이터 추가
+      formData.append('title', helpData.title);
+      formData.append('content', helpData.content);
+      formData.append('category', helpData.type === 'heavy' ? '1' : '2'); // 무거워요: 1, 어려워요: 2
+      formData.append(
+        'startDate',
+        helpData.timeType === 'now'
+          ? new Date().toISOString()
+          : `${helpData.date}T${helpData.startTime}:00`
+      );
+      formData.append(
+        'endDate',
+        helpData.timeType === 'now'
+          ? new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString() // 2시간 후
+          : `${helpData.date}T${helpData.endTime}:00`
+      );
 
-      const helpResult = await mutateAsync(helpFormData);
+      // 이미지 파일들 추가
+      imageFiles.forEach((file) => {
+        formData.append(`imageFiles`, file);
+      });
+
+      const helpResult = await mutateAsync(formData);
       const createdHelpId = helpResult?.id || null;
 
       if (!createdHelpId) {
         throw new Error('도움 요청 생성 후 ID를 받지 못했습니다.');
       }
 
-      // const helpResult = await mutateAsync({
-      //   ...helpData,
-      //   imageFiles: uploadedImageUrls,
-      // });
-      // createdHelpId = helpResult?.id || null;
+      // 성공 시 이미지 컨텍스트 클리어
+      clearImages();
 
-      // if (!createdHelpId) {
-      //   throw new Error('도움 요청 생성 후 ID를 받지 못했습니다.');
-      // }
-
-      // // 3. 모든 작업이 성공한 경우에만 성공 처리
       alert('도움 요청이 성공적으로 생성되었습니다!');
       router.push('/junior');
     } catch (error) {
@@ -229,14 +220,12 @@ const CreateHelpPage: React.FC = () => {
         {currentStep === 3 ? (
           <button
             className={`${styles.navButton} ${styles.navButtonPrimary} ${
-              !canGoNext() || isPending || isUploading
-                ? styles.navButtonDisabled
-                : ''
+              !canGoNext() || isPending ? styles.navButtonDisabled : ''
             }`}
             onClick={handleSubmit}
-            disabled={!canGoNext() || isPending || isUploading}
+            disabled={!canGoNext() || isPending}
           >
-            {isPending || isUploading ? '생성 중...' : getButtonText()}
+            {isPending ? '생성 중...' : getButtonText()}
           </button>
         ) : (
           <button

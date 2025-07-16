@@ -1,8 +1,7 @@
 'use client';
-
 import React from 'react';
 import styles from './Step3HelpDetails.module.css';
-import ImageUploader from './ImageUploader';
+import ImageUploader from '../../../../_components/commons/imageUploader/ImageUploader';
 
 interface Step3HelpDetailsProps {
   title: string;

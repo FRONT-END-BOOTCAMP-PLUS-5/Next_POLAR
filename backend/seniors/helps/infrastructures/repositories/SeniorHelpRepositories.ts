@@ -86,7 +86,7 @@ async function deleteHelpApplicant(helpId: number) {
 
 export class SeniorHelpRepository implements ISeniorHelpRepositoryInterface {
   async createHelp(help: SeniorHelp, seniorId: string): Promise<number> {
-    // 1. helps 테이블에 데이터 삽입
+    // 트랜잭션 시작
     const { data: helpData, error: helpError } = await supabase
       .from('helps')
       .insert([
@@ -158,13 +158,27 @@ export class SeniorHelpRepository implements ISeniorHelpRepositoryInterface {
           `[SeniorHelpRepository] 이미지 URL들 저장 성공 - HelpId: ${helpId}, 저장된 개수: ${help.imageFiles.length}`
         );
       }
+
+      console.log(`[SeniorHelpRepository] Help 생성 완료 - HelpId: ${helpId}`);
+      return helpId;
     } catch (error) {
       // 카테고리 관계 생성 또는 이미지 저장 실패 시 help도 삭제 (롤백)
-      await supabase.from('helps').delete().eq('id', helpId);
+      console.error(
+        `[SeniorHelpRepository] 트랜잭션 실패, 롤백 중 - HelpId: ${helpId}`,
+        error
+      );
+      try {
+        await supabase.from('help_categories').delete().eq('help_id', helpId);
+        await supabase.from('helps').delete().eq('id', helpId);
+        console.log(`[SeniorHelpRepository] 롤백 완료 - HelpId: ${helpId}`);
+      } catch (rollbackError) {
+        console.error(
+          `[SeniorHelpRepository] 롤백 중 오류 - HelpId: ${helpId}`,
+          rollbackError
+        );
+      }
       throw error;
     }
-
-    return helpId;
   }
 
   async updateHelp(help: UpdateHelpRequestWithHelpId): Promise<number> {

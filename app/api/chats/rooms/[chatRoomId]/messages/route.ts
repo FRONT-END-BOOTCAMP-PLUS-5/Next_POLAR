@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ContactMessageUseCases } from '@/backend/chats/messages/applications/usecases/ContactMessageUseCases';
 import { SbContactMessageRepository } from '@/backend/chats/messages/infrastructures/repositories/SbContactMessageRepository';
+import { getNicknameFromCookie } from '@/lib/jwt';
 
 const messageUseCases = new ContactMessageUseCases(
   new SbContactMessageRepository()
@@ -28,8 +29,10 @@ export async function GET(
     );
   }
 
-  // 쿠키에서 사용자 ID 가져오기 (UUID)
-  const nickname = 'jelly5915';
+  // 쿠키에서 사용자 ID 가져오기
+  const userData = getNicknameFromCookie(request);
+  const { nickname } = userData || {};
+
   if (!nickname) {
     console.warn(
       '[API][GET /api/chats/rooms/[chatRoomId]/messages] 인증되지 않은 사용자'
@@ -78,8 +81,9 @@ export async function POST(
     '[API][POST /api/chats/rooms/[chatRoomId]/messages] 메시지 생성 요청 시작'
   );
 
-  // 쿠키에서 사용자 ID 가져오기 (UUID)
-  const senderNickname = 'jelly5915'; //getNicknameFromCookie(request);
+  // 쿠키에서 사용자 ID 가져오기
+  const userData = getNicknameFromCookie(request);
+  const { nickname: senderNickname } = userData || {};
 
   const roomId = Number(params.chatRoomId);
 

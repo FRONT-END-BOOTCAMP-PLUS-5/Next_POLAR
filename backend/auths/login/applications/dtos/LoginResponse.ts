@@ -3,6 +3,6 @@ export class LoginResponseDTO {
     public accessToken: string,
     public refreshToken: string,
     public nickname: string,
-    public age: number
+    public role: string
   ) {}
 }
