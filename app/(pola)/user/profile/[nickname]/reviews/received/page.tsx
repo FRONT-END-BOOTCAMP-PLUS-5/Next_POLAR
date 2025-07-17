@@ -33,6 +33,8 @@ const ReceivedReviewsPage: React.FC = () => {
     error: reviewsErrorData,
   } = useReceivedReviews(params.nickname as string);
 
+  console.log(receivedReviewsData);
+
   const isLoading = userLoading || reviewsLoading;
   const isError = userError || reviewsError;
   const error = userErrorData || reviewsErrorData;

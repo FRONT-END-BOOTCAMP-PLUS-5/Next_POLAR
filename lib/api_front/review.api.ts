@@ -1,13 +1,15 @@
 import { API_ENDPOINTS } from '../constants/api';
 import apiClient from '../http.api';
-import { Review, ReceivedReviewsResponse, WrittenReviewsResponse } from '../models/review.model';
-import { CreateReviewRequest, CreateReviewResponse } from '../models/review.model';
+import { ReceivedReviewsResponse, WrittenReviewsResponse } from '../models/review.model';
+import { CreateReviewResponse } from '../models/review.model';
 
 // 받은 리뷰 목록 조회
 export const getReceivedReviews = async (nickname: string): Promise<ReceivedReviewsResponse> => {
   const response = await apiClient.get<ReceivedReviewsResponse>(
     `${API_ENDPOINTS.REVIEWS_RECEIVED}?nickname=${nickname}`
   );
+
+  console.log(response.data);
   return response.data;
 };
 
