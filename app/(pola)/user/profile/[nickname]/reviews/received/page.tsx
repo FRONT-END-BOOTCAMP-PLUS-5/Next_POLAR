@@ -1,16 +1,30 @@
-'use client';
+"use client";
 
-import { use } from 'react';
-import styles from '@/app/(pola)/user/profile/[nickname]/reviews/UserReviews.module.css';
-import ProfileSummary from '../_components/ProfileSummary';
-import ReviewCard from '../_components/ReviewCard';
-import { useUserProfile } from '@/lib/hooks/useUserProfile';
-import { useReceivedReviews } from '@/lib/hooks/useReceivedReviews';
+import { useParams } from "next/navigation";
+import styles from "@/app/(pola)/user/profile/[nickname]/reviews/UserReviews.module.css";
+import ProfileSummary from "../_components/ProfileSummary";
+import ReviewCard from "../_components/ReviewCard";
+import { useUserProfile } from "@/lib/hooks/useUserProfile";
+import { useReceivedReviews } from "@/lib/hooks/useReceivedReviews";
 
-export default function ReceivedReviewsPage({ params }: { params: Promise<{ nickname: string }> }) {
+export default function ReceivedReviewsPage({
+  params,
+}: {
+  params: Promise<{ nickname: string }>;
+}) {
   const { nickname } = use(params);
-  const { data: user, isLoading: userLoading, isError: userError, error: userErrorData } = useUserProfile(nickname);
-  const { data: receivedReviewsData, isLoading: reviewsLoading, isError: reviewsError, error: reviewsErrorData } = useReceivedReviews(nickname);
+  const {
+    data: user,
+    isLoading: userLoading,
+    isError: userError,
+    error: userErrorData,
+  } = useUserProfile(params.nickname as string);
+  const {
+    data: receivedReviewsData,
+    isLoading: reviewsLoading,
+    isError: reviewsError,
+    error: reviewsErrorData,
+  } = useReceivedReviews(nickname);
 
   const isLoading = userLoading || reviewsLoading;
   const isError = userError || reviewsError;
@@ -20,7 +34,11 @@ export default function ReceivedReviewsPage({ params }: { params: Promise<{ nick
     return <div className={styles.loadingContainer}>로딩 중...</div>;
   }
   if (isError) {
-    return <div className={styles.errorContainer}>오류: {error?.message || '알 수 없는 오류가 발생했습니다.'}</div>;
+    return (
+      <div className={styles.errorContainer}>
+        오류: {error?.message || "알 수 없는 오류가 발생했습니다."}
+      </div>
+    );
   }
 
   const reviews = receivedReviewsData?.reviews || [];
@@ -43,4 +61,4 @@ export default function ReceivedReviewsPage({ params }: { params: Promise<{ nick
       )}
     </div>
   );
-} 
+}
