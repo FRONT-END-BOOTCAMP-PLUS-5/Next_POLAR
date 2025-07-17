@@ -40,5 +40,5 @@ function generateNickname(): string {
 }
 
 function combineNickname(nickname: string, randomNumber: number): string {
-  return `${nickname}%23${randomNumber}`;
+  return `${nickname}${randomNumber}`;
 }
