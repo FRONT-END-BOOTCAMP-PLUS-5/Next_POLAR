@@ -1,26 +1,46 @@
 "use client";
 import styles from "./_styles/userProfile.module.css";
 import { useParams } from "next/navigation";
-import UserInfoSection from "@/app/_components/commons/common-sections/user-info/UserInfoSection";
 import UserTierSection from "@/app/_components/sections/user-tier/UserTierSection";
 import UserArchivmentSection from "@/app/_components/sections/user-archivment/UserArchivmentSection";
 import UserHelpsSection from "@/app/(pola)/user/profile/[nickname]/_components/user-helps/UserHelpsSection";
 import ProfileMenuSection from "./_components/sections/ProfileMenuSection";
+import { useEffect } from "react";
+import { useAuthStore } from "@/lib/stores/authStore";
+import { useApiQuery } from "@/lib/hooks/useApi";
+import { UserProfileResponseDto } from "@/backend/users/user/applications/dtos/UserDtos";
+import UserInfoSection from "@/app/_components/commons/common-sections/user-info/UserInfoSection";
 
 const UserProfilePage: React.FC = () => {
   const params = useParams();
-  const nickname = decodeURIComponent(params.nickname as string);
+  const nickname = params.nickname as string;
+
+  // Zustand 전역 상태에서 현재 로그인한 유저 정보 가져오기
+  const { user: currentUser, isAuthenticated } = useAuthStore();
+
+  const { data: userProfile } = useApiQuery<UserProfileResponseDto>(
+    ["userProfile", nickname],
+    `/api/users/${nickname}`,
+    {
+      enabled: !!nickname,
+    }
+  );
+
+  useEffect(() => {
+    if (!nickname) return;
+    console.log("현재 로그인한 유저:", currentUser);
+    console.log("인증 상태:", isAuthenticated);
+  }, [nickname, currentUser, isAuthenticated]);
+
+  console.log("현재 로그인한 유저:", currentUser);
+  console.log("userProfile 데이터:", userProfile);
 
   return (
     <div className={styles.container}>
       <h1>유저프로필</h1>
-      <UserInfoSection
-        nickname={nickname}
-        userName="사나이"
-        userType="Jr."
-        rating={4.5}
-        archiveBadge="환경미화원"
-      />
+      {userProfile && (
+        <UserInfoSection data={userProfile as UserProfileResponseDto} />
+      )}
 
       <UserTierSection
         season="2025 - 1시즌"
