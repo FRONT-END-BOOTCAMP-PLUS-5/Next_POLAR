@@ -1,6 +1,6 @@
 import { SignUpRepositoryInterface } from '@/backend/users/signup/domains/repositories/SignUpRepositoryInterface';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { SignUpDto } from '@/app/api/user/signup/route';
+import { SignUpDto } from '../../applications/dtos/SignUpDto';
 
 export class SbAuthRepository implements SignUpRepositoryInterface {
   private supabase: SupabaseClient;
