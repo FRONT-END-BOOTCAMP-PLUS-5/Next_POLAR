@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import HelpListCard from "@/app/_components/commons/list-card/HelpListCard";
+import HelpListCard from "@/app/_components/commons/list-card/help-list-card/HelpListCard";
 import type { HelpListResponseDto } from "@/backend/helps/applications/dtos/HelpDTO";
 import styles from "./userHelps.module.css";
 
