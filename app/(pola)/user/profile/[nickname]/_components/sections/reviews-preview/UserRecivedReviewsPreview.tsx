@@ -34,10 +34,10 @@ const UserRecivedReviewsPreview: React.FC<UserRecivedReviewsPreviewProps> = ({
       <div className={styles.headerRow}>
         <h2 className={styles.title}>{title}</h2>
         <Link
-          href={`/user/profile/${nickname}/reviews/received`}
+          href={`/user/profile/${nickname}/reviews`}
           className={styles.moreBtn}
         >
-          전체보기
+          더보기
         </Link>
       </div>
       <ul className={styles.reviewList}>
@@ -65,8 +65,5 @@ const UserRecivedReviewsPreview: React.FC<UserRecivedReviewsPreviewProps> = ({
     </section>
   );
 };
-
-
-
 
 export default UserRecivedReviewsPreview;
