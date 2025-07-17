@@ -21,7 +21,7 @@ export class SbUserRepository implements IUserRepository {
       }
 
       if (!data) {
-        console.log(`[Repository] 사용자를 찾을 수 없음 - ID: ${id}`);
+        console.log(`[Repository]사용자를 찾을 수 없음 - ID: ${id}`);
         return null;
       }
 
@@ -48,7 +48,7 @@ export class SbUserRepository implements IUserRepository {
       const { data, error } = await supabase
         .from('users')
         .select('*')
-        .eq('nickname', nickname)
+        .eq('nickname', nickname.replace('#', '%23'))
         .single();
 
       if (error) {
@@ -169,7 +169,7 @@ export class SbUserRepository implements IUserRepository {
     try {
       // 업데이트할 데이터 준비 (snake_case로 변환)
       const updateData: any = {};
-      
+
       if (updates.phoneNumber !== undefined) updateData.phone_number = updates.phoneNumber;
       if (updates.password !== undefined) updateData.password = updates.password;
       if (updates.email !== undefined) updateData.email = updates.email;

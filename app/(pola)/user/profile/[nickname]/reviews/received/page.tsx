@@ -6,13 +6,23 @@ import ProfileSummary from "../_components/ProfileSummary";
 import ReviewCard from "../_components/ReviewCard";
 import { useUserProfile } from "@/lib/hooks/useUserProfile";
 import { useReceivedReviews } from "@/lib/hooks/useReceivedReviews";
+import { useAuthStore } from "@/lib/stores/authStore";
 
-export default function ReceivedReviewsPage({
-  params,
-}: {
-  params: Promise<{ nickname: string }>;
-}) {
-  const { nickname } = use(params);
+const ReceivedReviewsPage: React.FC = () => {
+  const params = useParams();
+  const nickname = decodeURIComponent(params.nickname as string);
+  // Zustand 전역 상태에서 현재 로그인한 유저 정보 가져오기
+  const { user: currentUser, isAuthenticated } = useAuthStore();
+
+  console.log(
+    "로그인 유저:",
+    currentUser?.nickname,
+    "인증여부:",
+    isAuthenticated
+  );
+
+  console.log(`여기 ${params.nickname as string}`);
+
   const {
     data: user,
     isLoading: userLoading,
@@ -24,7 +34,7 @@ export default function ReceivedReviewsPage({
     isLoading: reviewsLoading,
     isError: reviewsError,
     error: reviewsErrorData,
-  } = useReceivedReviews(nickname);
+  } = useReceivedReviews(params.nickname as string);
 
   const isLoading = userLoading || reviewsLoading;
   const isError = userError || reviewsError;
@@ -61,4 +71,6 @@ export default function ReceivedReviewsPage({
       )}
     </div>
   );
-}
+};
+
+export default ReceivedReviewsPage;
