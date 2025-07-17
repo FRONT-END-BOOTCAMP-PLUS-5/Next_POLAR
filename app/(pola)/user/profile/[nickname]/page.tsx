@@ -15,9 +15,6 @@ const UserProfilePage: React.FC = () => {
   const params = useParams();
   const nickname = params.nickname as string;
 
-  // Zustand 전역 상태에서 현재 로그인한 유저 정보 가져오기
-  const { user: currentUser, isAuthenticated } = useAuthStore();
-
   const { data: userProfile } = useApiQuery<UserProfileResponseDto>(
     ["userProfile", nickname],
     `/api/users/${nickname}`,
@@ -25,15 +22,6 @@ const UserProfilePage: React.FC = () => {
       enabled: !!nickname,
     }
   );
-
-  useEffect(() => {
-    if (!nickname) return;
-    console.log("현재 로그인한 유저:", currentUser);
-    console.log("인증 상태:", isAuthenticated);
-  }, [nickname, currentUser, isAuthenticated]);
-
-  console.log("현재 로그인한 유저:", currentUser);
-  console.log("userProfile 데이터:", userProfile);
 
   return (
     <div className={styles.container}>
