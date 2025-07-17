@@ -1,0 +1,86 @@
+.reviewItem {
+  width: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px #eee;
+  padding: 20px 18px 14px 18px;
+  margin-bottom: 0;
+  border: 1px solid #ececec;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reviewHeaderRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.profileImageCircle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e5e5e5;
+  background: #fff;
+}
+
+.nicknameRow {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 16px;
+}
+
+.nicknameBold {
+  font-weight: 700;
+  color: #222;
+  font-size: 16px;
+  font-family: var(--font-pretendard);
+}
+
+.arrow {
+  color: #bbb;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.stars {
+  margin-left: auto;
+  font-size: 18px;
+  color: #2196f3;
+  font-weight: 700;
+  letter-spacing: 1px;
+  font-family: var(--font-pretendard);
+}
+
+.reviewTextBox {
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  background: #fafbfc;
+  padding: 16px 14px;
+  font-size: 15px;
+  color: #333;
+  min-height: 48px;
+  font-family: var(--font-pretendard);
+}
+
+.reviewImageContainer {
+  margin: 8px 0 8px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.07);
+  width: 100px;
+  height: 100px;
+}
+
+.reviewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+} 

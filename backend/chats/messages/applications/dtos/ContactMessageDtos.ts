@@ -1,6 +1,5 @@
 // UseCase에서 사용하는 DTO (백엔드 내부)
 export type CreateContactMessageDto = {
-  senderId: string; // UUID (DB 저장용)
   nickname: string; // 닉네임(신규 컬럼)
   contactRoomId: number;
   message: string;
@@ -30,7 +29,6 @@ export class ContactMessageRequestDto {
 }
 
 export interface ContactMessageUseCase {
-  senderId: string;
   nickname: string;
   contactRoomId: number;
   message: string;

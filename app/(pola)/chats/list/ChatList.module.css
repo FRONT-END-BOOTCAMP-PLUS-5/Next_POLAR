@@ -156,3 +156,21 @@
   font-size: 1rem;
   font-weight: 700;
 }
+
+.loading,
+.error,
+.emptyState {
+  text-align: center;
+  padding: 48px 24px;
+  color: #666;
+  font-size: 1rem;
+}
+
+.error {
+  color: #e11d48;
+}
+
+.emptyState {
+  color: #999;
+  font-style: italic;
+}

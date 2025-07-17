@@ -7,12 +7,11 @@ import { ContactMessageUseCase } from '@/backend/chats/messages/applications/dto
 export class SbContactMessageRepository implements IContactMessageRepository {
   // 메시지 저장
   async create(
-    requestDto: ContactMessageUseCase
+    requestDto: { nickname: string; contactRoomId: number; message: string }
   ): Promise<ContactMessageEntity> {
     const { data, error } = await supabase
       .from('contact_messages')
       .insert({
-        sender_id: requestDto.senderId,
         nickname: requestDto.nickname,
         contact_room_id: requestDto.contactRoomId,
         message: requestDto.message,
@@ -50,7 +49,6 @@ export class SbContactMessageRepository implements IContactMessageRepository {
       (row: {
         id: number;
         contact_room_id: number;
-        sender_id: string; // UUID
         nickname: string;
         message: string;
         created_at: string;

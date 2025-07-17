@@ -1,73 +1,29 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { use } from 'react';
-import Image from 'next/image';
 import styles from '@/app/(pola)/user/profile/[nickname]/reviews/UserReviews.module.css';
 import ProfileSummary from '../_components/ProfileSummary';
 import ReviewCard from '../_components/ReviewCard';
-
-interface Review {
-  id: number;
-  helpId: number;
-  writerNickname: string;
-  receiverNickname: string;
-  rating: number;
-  text: string;
-  reviewImgUrl?: string;
-  writerProfileImgUrl?: string;
-  createdAt: string;
-}
-
-interface UserProfile {
-  nickname: string;
-  name?: string;
-  profileImgUrl?: string;
-}
+import { useUserProfile } from '@/lib/hooks/useUserProfile';
+import { useReceivedReviews } from '@/lib/hooks/useReceivedReviews';
 
 export default function ReceivedReviewsPage({ params }: { params: Promise<{ nickname: string }> }) {
   const { nickname } = use(params);
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: user, isLoading: userLoading, isError: userError, error: userErrorData } = useUserProfile(nickname);
+  const { data: receivedReviewsData, isLoading: reviewsLoading, isError: reviewsError, error: reviewsErrorData } = useReceivedReviews(nickname);
 
-  useEffect(() => {
-    const fetchUserAndReviews = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        // 유저 정보 fetch
-        const userRes = await fetch(`/api/users/${nickname}`);
-        let userData = null;
-        if (userRes.ok) {
-          userData = await userRes.json();
-          setUser(userData);
-        }
-        // 리뷰 fetch
-        const response = await fetch(`/api/reviews/received?nickname=${nickname}`);
-        if (!response.ok) throw new Error('리뷰를 불러오는데 실패했습니다.');
-        const data = await response.json();
-        if (data.success) {
-          setReviews(data.reviews);
-        } else {
-          throw new Error(data.error || '리뷰를 불러오는데 실패했습니다.');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUserAndReviews();
-  }, [nickname]);
+  const isLoading = userLoading || reviewsLoading;
+  const isError = userError || reviewsError;
+  const error = userErrorData || reviewsErrorData;
 
-  if (loading) {
+  if (isLoading) {
     return <div className={styles.loadingContainer}>로딩 중...</div>;
   }
-  if (error) {
-    return <div className={styles.errorContainer}>오류: {error}</div>;
+  if (isError) {
+    return <div className={styles.errorContainer}>오류: {error?.message || '알 수 없는 오류가 발생했습니다.'}</div>;
   }
+
+  const reviews = receivedReviewsData?.reviews || [];
 
   return (
     <div className={styles.container}>

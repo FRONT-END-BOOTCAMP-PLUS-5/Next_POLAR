@@ -1,6 +1,5 @@
 import { ValidationError } from '@/backend/common/errors/ValidationError';
 import { IImageRepository } from '@/backend/images/domains/repositories/ImageRepository';
-import { getUuidByNickname } from '@/lib/getUserName';
 
 // 이미지 파일 검증 클래스
 export class ImageValidator {
@@ -87,17 +86,11 @@ export class UploadImageUseCase {
       // 2. 버킷명 검증
       ImageValidator.validateBucketName(bucketName);
 
-      // 3. nickname을 UUID로 변환
-      const userId = await getUuidByNickname(nickname);
-      if (!userId) {
-        throw new Error(`닉네임 "${nickname}"에 해당하는 사용자를 찾을 수 없습니다.`);
-      }
-
-      // 4. 이미지 업로드
+      // 3. nickname 기반으로 repository에 전달
       const imageUrl = await this.imageRepository.uploadImage(
         file,
         bucketName,
-        userId
+        nickname
       );
 
       console.log(

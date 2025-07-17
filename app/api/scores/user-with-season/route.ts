@@ -1,31 +1,22 @@
 import { GetUserScoresUseCase } from '@/backend/juniors/scores/applications/usecases/ScoreUseCases';
 import { ScoreRepository } from '@/backend/juniors/scores/infrastructures/repositories/ScoreRepository';
-import { getNicknameFromCookie } from '@/lib/jwt';
+import { extractNicknameForScoreAccess } from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
-  // 쿠키에서 nickname 추출
-  const userData = getNicknameFromCookie(req);
-  const { nickname } = userData || {};
+  // 공통 함수로 nickname 추출 및 권한 검증
+  const result = extractNicknameForScoreAccess(req);
+
+  if (result.error) {
+    const status = result.isOwnData ? 401 : 403;
+    return NextResponse.json({ error: result.error }, { status });
+  }
+
+  // season 파라미터 검증
   const season = Number(req.nextUrl.searchParams.get('season'));
-
-  if (!nickname) {
+  if (!season || isNaN(season)) {
     return NextResponse.json(
-      { error: '로그인이 필요합니다.' },
-      { status: 401 }
-    );
-  }
-
-  if (!season) {
-    return NextResponse.json(
-      { error: 'season이 필요합니다.' },
-      { status: 400 }
-    );
-  }
-
-  if (isNaN(season)) {
-    return NextResponse.json(
-      { error: '유효하지 않은 season입니다.' },
+      { error: '유효한 season이 필요합니다.' },
       { status: 400 }
     );
   }
@@ -33,7 +24,7 @@ export async function GET(req: NextRequest) {
   try {
     const scoreUseCase = new GetUserScoresUseCase(new ScoreRepository());
     const scores = await scoreUseCase.executeByNicknameAndSeason({
-      nickname,
+      nickname: result.nickname,
       season,
     });
     return NextResponse.json(scores, { status: 200 });

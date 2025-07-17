@@ -1,0 +1,16 @@
+.starRating {
+  display: flex;
+  gap: 2px;
+}
+
+.starFilled {
+  color: #FFD600;
+  cursor: pointer;
+  user-select: none;
+}
+
+.starEmpty {
+  color: #E0E0E0;
+  cursor: pointer;
+  user-select: none;
+} 

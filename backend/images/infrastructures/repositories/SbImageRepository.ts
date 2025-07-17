@@ -5,16 +5,16 @@ export class SbImageRepository implements IImageRepository {
   async uploadImage(
     file: File,
     bucketName: string,
-    userId: string
+    nickname: string
   ): Promise<{ url: string }> {
     console.log(
-      `[SbImageRepository] 이미지 업로드 시작 - Bucket: ${bucketName}, UserID: ${userId}, 파일: ${file.name}`
+      `[SbImageRepository] 이미지 업로드 시작 - Bucket: ${bucketName}, Nickname: ${nickname}, 파일: ${file.name}`
     );
 
     try {
       // 파일명 생성 (중복 방지)
       const fileExtension = file.name.split('.').pop();
-      const fileName = `${bucketName}_${userId}_${Date.now()}.${fileExtension}`;
+      const fileName = `${bucketName}_${nickname}_${Date.now()}.${fileExtension}`;
 
       // Supabase Storage에 업로드
       const { error } = await supabase.storage
@@ -26,7 +26,7 @@ export class SbImageRepository implements IImageRepository {
 
       if (error) {
         console.error(
-          `[SbImageRepository] 업로드 실패 - Bucket: ${bucketName}, UserID: ${userId}`,
+          `[SbImageRepository] 업로드 실패 - Bucket: ${bucketName}, Nickname: ${nickname}`,
           error
         );
         throw new Error(`이미지 업로드에 실패했습니다: ${error.message}`);
@@ -43,7 +43,7 @@ export class SbImageRepository implements IImageRepository {
       return { url: publicUrl };
     } catch (error) {
       console.error(
-        `[SbImageRepository] 이미지 업로드 중 오류 발생 - Bucket: ${bucketName}, UserID: ${userId}`,
+        `[SbImageRepository] 이미지 업로드 중 오류 발생 - Bucket: ${bucketName}, Nickname: ${nickname}`,
         error
       );
       throw error;

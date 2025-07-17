@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import styles from '../UserReviews.module.css';
+import styles from './ProfileSummary.module.css';
 
 interface UserProfile {
   nickname: string;
@@ -19,7 +19,7 @@ export default function ProfileSummary({ user }: { user: UserProfile }) {
       />
       <div className={styles.profileInfoBox}>
         <div className={styles.profileNickname}>
-          {user.name} <span style={{ color: '#888', fontSize: '15px' }}>({user.nickname})</span>
+          {user.name} <span className={styles.profileNicknameSub}>({user.nickname})</span>
         </div>
       </div>
     </div>

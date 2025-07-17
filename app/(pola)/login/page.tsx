@@ -25,17 +25,10 @@ const LoginPage: React.FC = () => {
   // 로그인 성공 시 리다이렉트
   useEffect(() => {
     if (loginMutation.isSuccess) {
-      // role에 따라 다른 페이지로 리다이렉트
-      const role = loginMutation.data?.role;
-      if (role === 'senior') {
-        router.push('/senior');
-      } else if (role === 'junior') {
-        router.push('/junior');
-      } else {
-        router.push('/'); // 기본 페이지
-      }
+      // 로그인 성공 시 /main으로 리다이렉트
+      router.push('/main');
     }
-  }, [loginMutation.isSuccess, loginMutation.data, router]);
+  }, [loginMutation.isSuccess, router]);
 
   return (
     <div className={styles.loginContainer}>

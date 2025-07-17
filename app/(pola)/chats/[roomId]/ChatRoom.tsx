@@ -1,145 +1,61 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
-import styles from './ChatRoom.module.css';
+import { useRef, useEffect } from 'react';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import styles from './ChatRoom.module.css';
+import { useChatInput } from '@/lib/hooks/chats/useChatInput';
+import { useChatMessages } from '@/lib/hooks/chats/useChatMessages';
+import { useSendMessage } from '@/lib/hooks/chats/useSendMessage';
+import { useRealtimeChat } from '@/lib/hooks/chats/useRealtimeChat';
 
 interface ChatRoomProps {
   roomId: string;
   loginUserNickname: string;
 }
 
-interface Message {
-  id: number | string;
-  nickname: string;
-  contactRoomId: number;
-  message: string;
-  createdAt: Date;
-}
-
 export default function ChatRoom({ roomId, loginUserNickname }: ChatRoomProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isComposing, setIsComposing] = useState(false);
-  const [canSend, setCanSend] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
+
+  // 채팅 관련 훅들 사용
+  const { data: messagesData, isLoading } = useChatMessages(roomId);
+  const { mutate: sendMessageMutate, isPending: isSending } = useSendMessage();
+
+  // 실시간 채팅 구독
+  useRealtimeChat({
+    roomId,
+    onMessageReceived: () => {
+      // 새 메시지가 도착하면 스크롤을 맨 아래로
+      endRef.current?.scrollIntoView({ behavior: 'smooth' });
+    },
+  });
+
+  // 채팅 입력 관리
+  const {
+    message,
+    canSend,
+    handleInputChange,
+    handleSendMessage,
+    handleKeyDown,
+    handleCompositionStart,
+    handleCompositionEnd,
+  } = useChatInput({
+    onSendMessage: (messageText) => {
+      sendMessageMutate({ roomId, message: messageText });
+    },
+  });
 
   // 스크롤 최하단
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messagesData?.messages]);
 
-  // 실시간 메시지 fetch 동기화
-  useEffect(() => {
-    const channel = supabase
-      .channel(`chat_room_${roomId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'contact_messages',
-          filter: `contact_room_id=eq.${roomId}`,
-        },
-        async () => {
-          setIsLoading(true);
-          try {
-            const res = await fetch(`/api/chats/rooms/${roomId}/messages`);
-            const { messages: msgs } = await res.json();
-            setMessages(
-              msgs.map((m: any) => ({
-                ...m,
-                createdAt: new Date(m.createdAt),
-              }))
-            );
-          } catch {
-            /* ignore */
-          } finally {
-            setIsLoading(false);
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [roomId]);
-
-  // 초기 메시지 로드
-  useEffect(() => {
-    (async () => {
-      setIsLoading(true);
-      try {
-        const res = await fetch(`/api/chats/rooms/${roomId}/messages`);
-        const { messages: msgs } = await res.json();
-        setMessages(
-          msgs.map((m: any) => ({
-            ...m,
-            createdAt: new Date(m.createdAt),
-          }))
-        );
-      } catch {
-        /* ignore */
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, [roomId]);
-
-  const syncCanSend = () => {
-    const text = textareaRef.current?.value.trim() || '';
-    setCanSend(!!text);
-  };
-
-  // 한글 조합 중 Enter 무시
-  const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey && !isComposing) {
-      e.preventDefault();
-      sendMessage();
-    }
-  };
-
-  // 메시지 전송 (ref 기반 optimistic update)
-  const sendMessage = async () => {
-    const text = textareaRef.current?.value.trim();
-    if (!text) return;
-
-    // 입력창 초기화
-    textareaRef.current!.value = '';
-    setCanSend(false);
-
-    // optimistic
-    const tempId = 'temp_' + Date.now();
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: tempId,
-        nickname: 'jelly5915',
-        contactRoomId: Number(roomId),
-        message: text,
-        createdAt: new Date(),
-      },
-    ]);
-
-    // 실제 API 호출
-    try {
-      const res = await fetch(`/api/chats/rooms/${roomId}/messages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text }),
-      });
-      if (!res.ok) throw new Error();
-    } catch {
-      // 실패 시 롤백은 필요시 구현
-    }
-  };
+  // 메시지 데이터 변환
+  const messages =
+    messagesData?.messages.map((msg) => ({
+      ...msg,
+      createdAt: new Date(msg.createdAt),
+    })) || [];
 
   return (
     <div className={styles.chatContainer}>
@@ -148,7 +64,7 @@ export default function ChatRoom({ roomId, loginUserNickname }: ChatRoomProps) {
           <div className={styles.loading}>메시지 로딩 중...</div>
         ) : (
           messages.map((msg) => {
-            const isMine = msg.nickname === 'jelly5915';
+            const isMine = msg.nickname === loginUserNickname;
             return (
               <div
                 key={msg.id}
@@ -209,20 +125,18 @@ export default function ChatRoom({ roomId, loginUserNickname }: ChatRoomProps) {
           className={styles.messageInput}
           rows={1}
           placeholder='메시지 입력'
-          onKeyDown={onKeyDown}
-          onInput={syncCanSend}
-          onCompositionStart={() => setIsComposing(true)}
-          onCompositionEnd={() => {
-            setIsComposing(false);
-            syncCanSend();
-          }}
+          value={message}
+          onChange={(e) => handleInputChange(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onCompositionStart={handleCompositionStart}
+          onCompositionEnd={handleCompositionEnd}
         />
         <button
           className={styles.sendButton}
-          disabled={!canSend}
-          onClick={sendMessage}
+          disabled={!canSend || isSending}
+          onClick={handleSendMessage}
         >
-          전송
+          {isSending ? '전송 중...' : '전송'}
         </button>
       </div>
     </div>

@@ -1,7 +1,7 @@
 'use client';
 import styles from './JuniorMain.module.css';
-import ProfileBanner from '../_components/ProfileBanner';
-import CategoryGrid from '../_components/CategoryGrid';
+import ProfileBanner from '@/app/_components/ProfileBanner';
+import CategoryGrid from '@/app/_components/CategoryGrid';
 
 export default function JuniorMainPage() {
   return (

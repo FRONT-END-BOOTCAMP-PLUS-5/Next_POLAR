@@ -1,0 +1,22 @@
+.profileSummary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.profileImageLarge {
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border: 2px solid #eee;
+}
+.profileInfoBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.profileNickname {
+  font-size: 20px;
+  font-weight: bold;
+} 

@@ -1,0 +1,15 @@
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-weight: 500;
+}
+
+.input {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+} 

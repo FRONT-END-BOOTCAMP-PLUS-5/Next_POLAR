@@ -4,7 +4,6 @@ import {
   ContactMessageListResponseDto,
   ContactMessageUseCase,
 } from '@/backend/chats/messages/applications/dtos/ContactMessageDtos';
-import { getUuidByNickname } from '@/lib/getUserName';
 import { ContactMessageMapper } from '../../infrastructures/mappers/ContactMessageMapper';
 import { ContactMessageEntity } from '@/backend/chats/messages/domains/entities/contactMessage';
 
@@ -38,14 +37,8 @@ export class ContactMessageUseCases {
     contactRoomId: number,
     message: string
   ): Promise<ContactMessageResponseDto> {
-    // 닉네임을 UUID로 변환
-    const senderId = await getUuidByNickname(nickname);
-    if (!senderId) {
-      throw new Error(`사용자를 찾을 수 없습니다: ${nickname}`);
-    }
-
+    // nickname 기반으로 repository에 전달
     const entity: ContactMessageUseCase = {
-      senderId: senderId,
       nickname: nickname,
       contactRoomId: contactRoomId,
       message: message,

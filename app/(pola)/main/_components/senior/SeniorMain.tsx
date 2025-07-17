@@ -1,6 +1,6 @@
 'use client';
 import styles from './SeniorMain.module.css';
-import CategoryGrid from '../_components/CategoryGrid';
+import CategoryGrid from '@/app/_components/CategoryGrid';
 
 export default function SeniorMainPage() {
   return (

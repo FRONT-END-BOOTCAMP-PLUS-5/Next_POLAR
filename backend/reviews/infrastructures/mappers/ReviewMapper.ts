@@ -7,6 +7,8 @@ export class ReviewMapper {
       row.help_id,
       row.writer_id,
       row.receiver_id,
+      row.writer_nickname,
+      row.receiver_nickname,
       row.rating,
       row.text,
       row.review_img_url,

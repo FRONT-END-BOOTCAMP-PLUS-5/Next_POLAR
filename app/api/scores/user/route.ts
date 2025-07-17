@@ -1,24 +1,21 @@
 import { GetUserScoresUseCase } from '@/backend/juniors/scores/applications/usecases/ScoreUseCases';
 import { ScoreRepository } from '@/backend/juniors/scores/infrastructures/repositories/ScoreRepository';
-import { getNicknameFromCookie } from '@/lib/jwt';
+import { extractNicknameForScoreAccess } from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
-  // 쿠키에서 nickname 추출
-  const userData = getNicknameFromCookie(req);
-  const { nickname } = userData || {};
+  // 공통 함수로 nickname 추출 및 권한 검증
+  const result = extractNicknameForScoreAccess(req);
 
-  if (!nickname) {
-    return NextResponse.json(
-      { error: '로그인이 필요합니다.' },
-      { status: 401 }
-    );
+  if (result.error) {
+    const status = result.isOwnData ? 401 : 403;
+    return NextResponse.json({ error: result.error }, { status });
   }
 
   try {
     const scoreUseCase = new GetUserScoresUseCase(new ScoreRepository());
     const scores = await scoreUseCase.executeByNickname({
-      nickname,
+      nickname: result.nickname,
     });
     return NextResponse.json(scores, { status: 200 });
   } catch (error) {

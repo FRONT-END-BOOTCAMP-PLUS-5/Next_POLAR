@@ -1,25 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ReviewUseCases } from '@/backend/reviews/applications/usecases/ReviewUseCases';
 import { SbReviewRepository } from '@/backend/reviews/infrastructures/repositories/SbReviewRepository';
-import { getNicknameByUuid } from '@/lib/getUserName';
-import { getNicknameFromCookie } from '@/lib/jwt';
+import { ReviewResponseDto } from '@/backend/reviews/applications/dtos/ReviewDtos';
 
 const reviewUseCases = new ReviewUseCases(new SbReviewRepository());
 
 // ReviewEntity를 API 응답용 DTO로 변환
-async function convertEntityToResponseDto(entity: any) {
-  const writerNickname = await getNicknameByUuid(entity.writerId);
-  const receiverNickname = await getNicknameByUuid(entity.receiverId);
-
-  if (!writerNickname || !receiverNickname) {
-    throw new Error('사용자 정보를 찾을 수 없습니다.');
-  }
-
+async function convertEntityToResponseDto(entity: any): Promise<ReviewResponseDto> {
   return {
     id: entity.id,
     helpId: entity.helpId,
-    writerNickname,
-    receiverNickname,
+    writerNickname: entity.writerNickname,
+    receiverNickname: entity.receiverNickname,
     rating: entity.rating,
     text: entity.text,
     reviewImgUrl: entity.reviewImgUrl,
@@ -28,20 +20,17 @@ async function convertEntityToResponseDto(entity: any) {
 }
 
 export async function GET(request: NextRequest) {
-  const userData = getNicknameFromCookie(request);
-  const { nickname } = userData || {};
+  const receiverNickname = request.nextUrl.searchParams.get('nickname');
 
-  if (!nickname) {
+  if (!receiverNickname) {
     return NextResponse.json(
-      { error: '로그인이 필요합니다.' },
-      { status: 401 }
+      { error: 'receiverNickname이 필요합니다.' },
+      { status: 400 }
     );
   }
 
   try {
-    const reviewEntities = await reviewUseCases.getReviewsByReceiverNickname(
-      nickname
-    );
+    const reviewEntities = await reviewUseCases.getReviewsByReceiverNickname(receiverNickname);
 
     // Entity들을 nickname 포함 DTO로 변환
     const reviews = await Promise.all(

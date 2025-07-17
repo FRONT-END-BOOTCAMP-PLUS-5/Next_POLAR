@@ -2,63 +2,98 @@ import { supabase } from '@/backend/common/utils/supabaseClient';
 import { ReviewMapper } from '@/backend/reviews/infrastructures/mappers/ReviewMapper';
 import { IReviewRepository } from '@/backend/reviews/domains/repositories/ReviewRepository';
 import { ReviewEntity } from '@/backend/reviews/domains/entities/review';
+import { CreateReviewRequest } from '@/backend/reviews/applications/dtos/ReviewDtos';
 
 export class SbReviewRepository implements IReviewRepository {
-  // receiverId로 받은 리뷰 리스트 조회
-  async findByReceiverId(receiverId: string): Promise<ReviewEntity[]> {
+  // nickname으로 받은 리뷰 리스트 조회
+  async findByReceiverNickname(nickname: string): Promise<ReviewEntity[]> {
     const { data, error } = await supabase
       .from('reviews')
       .select('*')
-      .eq('receiver_id', receiverId)
+      .eq('receiver_nickname', nickname)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
     if (!data) return [];
 
-    return data.map((review) => ReviewMapper.toEntity(review));
+    return data.map((review: any) => ReviewMapper.toEntity(review));
   }
 
-  // writerId로 내가 쓴(작성한) 리뷰 리스트 조회
-  async findByWriterId(writerId: string): Promise<ReviewEntity[]> {
+  // nickname으로 내가 쓴(작성한) 리뷰 리스트 조회
+  async findByWriterNickname(nickname: string): Promise<ReviewEntity[]> {
     const { data, error } = await supabase
       .from('reviews')
       .select('*')
-      .eq('writer_id', writerId)
+      .eq('writer_nickname', nickname)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
     if (!data) return [];
 
-    return data.map((review) => ReviewMapper.toEntity(review));
+    return data.map((review: any) => ReviewMapper.toEntity(review));
   }
 
-  // 리뷰 id로 단일 리뷰 상세 조회
-  async findById(reviewId: number): Promise<ReviewEntity | null> {
-    const { data, error } = await supabase
-      .from('reviews')
-      .select('*')
-      .eq('id', reviewId)
+  // nickname 기반 리뷰 생성
+  async createByNicknames(request: CreateReviewRequest): Promise<ReviewEntity> {
+    const { helpId, writerNickname, rating, text, reviewImgUrl } = request;
+
+    // 1. writerNickname을 users 테이블에서 writerId(uuid)로 변환
+    const { data: writerUser, error: writerUserError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('nickname', writerNickname)
       .single();
+    if (writerUserError || !writerUser) {
+      throw new Error('writerId를 찾을 수 없습니다.');
+    }
+    const writerId = writerUser.id;
 
-    if (error) throw error;
-    if (!data) return null;
+    // 2. helps 테이블에서 helpId로 seniorId(uuid) 조회
+    const { data: help, error: helpError } = await supabase
+      .from('helps')
+      .select('senior_id')
+      .eq('id', helpId)
+      .single();
+    if (helpError || !help) {
+      throw new Error('헬프의 seniorId를 찾을 수 없습니다.');
+    }
+    const seniorId = help.senior_id;
 
-    return ReviewMapper.toEntity(data);
-  }
+    let receiverId: string;
+    if (writerId === seniorId) {
+      // 3. writer가 senior일 때: help_applicants에서 매칭된 주니어의 uuid(receiverId) 자동조인
+      const { data: applicant, error: applicantError } = await supabase
+        .from('help_applicants')
+        .select('junior_id')
+        .eq('help_id', helpId)
+        .eq('is_accepted', true)
+        .single();
+      if (applicantError || !applicant) {
+        throw new Error('help_applicants에서 매칭된 주니어의 uuid를 찾을 수 없습니다.');
+      }
+      receiverId = applicant.junior_id;
+    } else {
+      // 4. writer가 junior일 때: seniorId가 receiverId
+      receiverId = seniorId;
+    }
 
-  // 리뷰 생성
-  async create(
-    review: Omit<ReviewEntity, 'id' | 'createdAt'>
-  ): Promise<ReviewEntity> {
+    // 5. writerId, receiverId로 리뷰 저장 (닉네임도 함께 저장)
     const { data, error } = await supabase
       .from('reviews')
       .insert({
-        help_id: review.helpId,
-        writer_id: review.writerId,
-        receiver_id: review.receiverId,
-        rating: review.rating,
-        text: review.text,
-        review_img_url: review.reviewImgUrl,
+        help_id: helpId,
+        writer_id: writerId,
+        receiver_id: receiverId,
+        writer_nickname: writerNickname,
+        receiver_nickname: writerId === seniorId ? ( // writer가 senior면 주니어 닉네임, 아니면 시니어 닉네임
+          (await supabase.from('users').select('nickname').eq('id', receiverId).single()).data?.nickname
+        ) : (
+          (await supabase.from('users').select('nickname').eq('id', receiverId).single()).data?.nickname
+        ),
+        rating,
+        text,
+        review_img_url: reviewImgUrl,
+        created_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -67,102 +102,5 @@ export class SbReviewRepository implements IReviewRepository {
     if (!data) throw new Error('리뷰 생성 실패');
 
     return ReviewMapper.toEntity(data);
-  }
-
-  // helpId와 writerId로 receiverId 계산
-  async calculateReceiverId(helpId: number, writerId: string): Promise<string> {
-    // 1. help 정보 조회하여 senior_id 확인
-    const { data: helpData, error: helpError } = await supabase
-      .from('helps')
-      .select('senior_id')
-      .eq('id', helpId)
-      .single();
-
-    if (helpError) {
-      console.error(
-        `[SbReviewRepository] Help 조회 실패: helpId=${helpId}, error=${helpError.message}`
-      );
-      throw new Error(
-        `Help ID ${helpId} 조회 중 오류가 발생했습니다: ${helpError.message}`
-      );
-    }
-
-    if (!helpData) {
-      console.error(`[SbReviewRepository] Help 데이터 없음: helpId=${helpId}`);
-      throw new Error(
-        `Help ID ${helpId}에 해당하는 도움 요청을 찾을 수 없습니다.`
-      );
-    }
-
-    const seniorId = helpData.senior_id;
-
-    // 2. writerId가 수락된 주니어인지 시니어인지 확인
-    if (writerId === seniorId) {
-      // 작성자가 시니어인 경우: help_applicants에서 is_accepted=true인 주니어를 찾음
-      const { data: applicantData, error: applicantError } = await supabase
-        .from('help_applicants')
-        .select('junior_id')
-        .eq('help_id', helpId)
-        .eq('is_accepted', true)
-        .single();
-
-      if (applicantError) {
-        console.error(
-          `[SbReviewRepository] 수락된 주니어 조회 실패: helpId=${helpId}, error=${applicantError.message}`
-        );
-        throw new Error(
-          `Help ID ${helpId}에 대한 수락된 주니어 조회 중 오류가 발생했습니다: ${applicantError.message}`
-        );
-      }
-
-      if (!applicantData) {
-        console.error(
-          `[SbReviewRepository] 수락된 주니어 없음: helpId=${helpId}`
-        );
-        throw new Error(
-          `Help ID ${helpId}에 대한 수락된 주니어가 없습니다. 아직 주니어가 수락되지 않았거나, 수락된 주니어가 존재하지 않습니다.`
-        );
-      }
-
-      return applicantData.junior_id;
-    } else {
-      // 작성자가 주니어인 경우: help_applicants에서 해당 주니어가 수락되었는지 확인
-      const { data: applicantData, error: applicantError } = await supabase
-        .from('help_applicants')
-        .select('junior_id, is_accepted')
-        .eq('help_id', helpId)
-        .eq('junior_id', writerId)
-        .single();
-
-      if (applicantError) {
-        console.error(
-          `[SbReviewRepository] 주니어 신청 정보 조회 실패: helpId=${helpId}, writerId=${writerId}, error=${applicantError.message}`
-        );
-        throw new Error(
-          `Help ID ${helpId}에 대한 주니어 신청 정보 조회 중 오류가 발생했습니다: ${applicantError.message}`
-        );
-      }
-
-      if (!applicantData) {
-        console.error(
-          `[SbReviewRepository] 주니어 신청 정보 없음: helpId=${helpId}, writerId=${writerId}`
-        );
-        throw new Error(
-          `Help ID ${helpId}에 대한 주니어 신청 정보가 없습니다. 해당 도움 요청에 신청하지 않았거나, 신청 정보가 삭제되었을 수 있습니다.`
-        );
-      }
-
-      if (!applicantData.is_accepted) {
-        console.error(
-          `[SbReviewRepository] 주니어 신청이 수락되지 않음: helpId=${helpId}, writerId=${writerId}`
-        );
-        throw new Error(
-          `Help ID ${helpId}에 대한 주니어 신청이 아직 수락되지 않았습니다. 시니어가 수락한 후에 리뷰를 작성할 수 있습니다.`
-        );
-      }
-
-      // 수락된 주니어인 경우: helps 테이블의 senior_id를 반환
-      return seniorId;
-    }
   }
 }
