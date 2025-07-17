@@ -4,7 +4,7 @@ import { IUserRepository } from '@/backend/common/repositories/IUserRepository';
 
 // 특정 사용자 조회 UseCase
 export class GetUserByIdUseCase {
-  constructor(private readonly userRepository: IUserRepository) {}
+  constructor(private readonly userRepository: IUserRepository) { }
 
   async execute(id: string): Promise<CommonUserEntity | null> {
     return this.userRepository.getUserById(id);
@@ -13,7 +13,7 @@ export class GetUserByIdUseCase {
 
 // 회원 정보 수정 UseCase
 export class UpdateUserInfoUseCase {
-  constructor(private readonly userRepository: IUserRepository) {}
+  constructor(private readonly userRepository: IUserRepository) { }
 
   async execute(id: string, updateData: CommonUserEntity): Promise<CommonUserEntity | null> {
     return this.userRepository.updateUser(id, updateData);
@@ -166,7 +166,7 @@ export interface UserProfileUpdate {
 
 // 공용 사용자 Use Case
 export class CommonUserUseCase {
-  constructor(private readonly userRepository: IUserRepository) {}
+  constructor(private readonly userRepository: IUserRepository) { }
 
   // 특정 사용자 조회
   async getUserById(id: string): Promise<CommonUserEntity | null> {
@@ -301,8 +301,8 @@ export class CommonUserUseCase {
       if (updates.age !== undefined) {
         UserValidator.validateAge(updates.age);
       }
-      if (updates.profileImgUrl) {
-        UserValidator.validateProfileImageUrl(updates.profileImgUrl);
+      if (updates.profile_img_url) {
+        UserValidator.validateProfileImageUrl(updates.profile_img_url);
       }
       if (updates.address) {
         UserValidator.validateAddress(updates.address);
@@ -329,7 +329,7 @@ export class CommonUserUseCase {
         updates.password ?? existingUser.password,
         updates.email ?? existingUser.email,
         updates.age ?? existingUser.age,
-        updates.profileImgUrl ?? existingUser.profileImgUrl,
+        updates.profile_img_url ?? existingUser.profileImgUrl,
         updates.address ?? existingUser.address,
         updates.name ?? existingUser.name,
         updates.nickname ?? existingUser.nickname,
