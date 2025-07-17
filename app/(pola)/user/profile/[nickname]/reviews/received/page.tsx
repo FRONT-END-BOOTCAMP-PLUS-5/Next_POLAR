@@ -10,7 +10,6 @@ import { useAuthStore } from "@/lib/stores/authStore";
 
 const ReceivedReviewsPage: React.FC = () => {
   const params = useParams();
-  const nickname = decodeURIComponent(params.nickname as string);
   // Zustand 전역 상태에서 현재 로그인한 유저 정보 가져오기
   const { user: currentUser, isAuthenticated } = useAuthStore();
 
@@ -20,8 +19,6 @@ const ReceivedReviewsPage: React.FC = () => {
     "인증여부:",
     isAuthenticated
   );
-
-  console.log(`여기 ${params.nickname as string}`);
 
   const {
     data: user,

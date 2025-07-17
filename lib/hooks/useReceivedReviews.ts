@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getReceivedReviews } from '../api_front/review.api';
-import { Review, ReceivedReviewsResponse } from '../models/review.model';
+import { ReceivedReviewsResponse } from '../models/review.model';
 
 // 받은 리뷰 목록 조회 훅
 export function useReceivedReviews(nickname: string) {
