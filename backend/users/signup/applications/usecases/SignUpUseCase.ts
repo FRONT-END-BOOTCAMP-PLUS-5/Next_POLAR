@@ -2,13 +2,13 @@ import { SignUpRepositoryInterface } from '@/backend/users/signup/domains/reposi
 import { SignUpDto } from '../dtos/SignUpDto';
 
 const ADJECTIVES = [
-  "귀여운", "용감한", "행복한", "슬기로운", "빠른",
-  "느긋한", "신비로운", "명랑한", "우아한", "씩씩한"
+  "Cute", "Brave", "Happy", "Wise", "Fast",
+  "Relaxed", "Mysterious", "Cheerful", "Elegant", "Energetic"
 ];
 
 const ANIMALS = [
-  "토끼", "호랑이", "여우", "곰", "사자",
-  "늑대", "다람쥐", "고양이", "강아지", "펭귄"
+  "Rabbit", "Tiger", "Fox", "Bear", "Lion",
+  "Wolf", "Squirrel", "Cat", "Dog", "Penguin"
 ];
 
 
@@ -40,5 +40,5 @@ function generateNickname(): string {
 }
 
 function combineNickname(nickname: string, randomNumber: number): string {
-  return `${nickname}#${randomNumber}`;
+  return `${nickname}%23${randomNumber}`;
 }
