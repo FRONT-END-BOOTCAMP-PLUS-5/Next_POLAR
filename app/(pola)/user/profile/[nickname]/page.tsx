@@ -8,6 +8,7 @@ import ProfileMenuSection from "./_components/sections/profile-menu/ProfileMenuS
 import { useApiQuery } from "@/lib/hooks/useApi";
 import { UserProfileResponseDto } from "@/backend/users/user/applications/dtos/UserDtos";
 import UserInfoSection from "@/app/_components/commons/common-sections/user-info/UserInfoSection";
+import UserRecivedReviewsPreview from "./_components/sections/reviews-preview/UserRecivedReviewsPreview";
 
 const UserProfilePage: React.FC = () => {
   const params = useParams();
@@ -77,6 +78,13 @@ const UserProfilePage: React.FC = () => {
           { name: "상담", points: 400000 },
           { name: "기타", points: 200000 },
         ]}
+      />
+
+      <UserRecivedReviewsPreview
+        nickname={nickname}
+        reviews={[]}
+        title="받은 리뷰 미리보기"
+        maxPreviewCount={3}
       />
 
       <ProfileMenuSection

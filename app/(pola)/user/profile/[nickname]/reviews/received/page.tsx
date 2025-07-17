@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import styles from "@/app/(pola)/user/profile/[nickname]/reviews/UserReviews.module.css";
 import ProfileSummary from "../_components/ProfileSummary";
-import ReviewCard from "../_components/ReviewCard";
+import ReviewCard from "@/app/_components/commons/list-card/review-list-card/ReviewCard";
 import { useUserProfile } from "@/lib/hooks/useUserProfile";
 import { useReceivedReviews } from "@/lib/hooks/useReceivedReviews";
 import { useAuthStore } from "@/lib/stores/authStore";
