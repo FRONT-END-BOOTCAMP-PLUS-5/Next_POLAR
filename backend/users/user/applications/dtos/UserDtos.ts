@@ -34,5 +34,5 @@ export interface UserProfileResponseDto {
   profileImgUrl: string;
   address: string;
   createdAt: string;
-  uuid: string;
+  nickname: string;
 }
