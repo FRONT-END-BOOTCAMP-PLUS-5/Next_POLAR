@@ -40,3 +40,21 @@ export interface ChatRoomDetailResponseDto {
     status: string;
   };
 }
+
+export interface ConnectedHelpDto {
+  id: number;
+  title: string;
+  representativeImage: string; // 대표 이미지 URL
+  startDate: string;
+  endDate: string;
+  createdAt: string;
+}
+
+// 채팅방 상세 정보와 연결된 helps 리스트 응답 DTO
+export interface ChatRoomWithHelpsResponseDto {
+  chatRoomId: number;
+  juniorNickname: string;
+  seniorNickname: string;
+  createdAt: string;
+  helps: ConnectedHelpDto[];
+}

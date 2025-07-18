@@ -1,3 +1,4 @@
+'use client';
 import { useEffect, useRef } from 'react';
 import { createClient, RealtimeChannel } from '@supabase/supabase-js';
 import { useQueryClient } from '@tanstack/react-query';
@@ -9,7 +10,7 @@ const supabase = createClient(
 );
 
 interface UseRealtimeChatProps {
-  roomId: string;
+  roomId: number;
   onMessageReceived?: () => void;
 }
 

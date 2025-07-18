@@ -34,3 +34,34 @@ export class CommonHelpEntity {
     };
   }
 }
+
+// nickname을 포함한 help 엔티티
+export class CommonHelpWithNicknameEntity {
+  constructor(
+    public id: number,
+    public seniorId: string,
+    public seniorNickname: string,
+    public title: string,
+    public startDate: Date,
+    public endDate: Date,
+    public category: number[],
+    public content: string,
+    public status: string,
+    public createdAt: Date
+  ) {}
+
+  toJSON() {
+    return {
+      id: this.id,
+      seniorId: this.seniorId,
+      seniorNickname: this.seniorNickname,
+      title: this.title,
+      startDate: this.startDate,
+      endDate: this.endDate,
+      category: this.category,
+      content: this.content,
+      status: this.status,
+      createdAt: this.createdAt,
+    };
+  }
+}

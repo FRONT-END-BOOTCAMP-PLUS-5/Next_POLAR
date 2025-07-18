@@ -9,7 +9,7 @@ import { useSendMessage } from '@/lib/hooks/chats/useSendMessage';
 import { useRealtimeChat } from '@/lib/hooks/chats/useRealtimeChat';
 
 interface ChatRoomProps {
-  roomId: string;
+  roomId: number;
   loginUserNickname: string;
 }
 

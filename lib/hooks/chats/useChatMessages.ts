@@ -3,7 +3,7 @@ import { getChatMessages } from '../../api_front/chat.api';
 import { QUERY_KEYS } from '../../constants/api';
 import { GetMessagesResponse } from '../../models/chatDto';
 
-export function useChatMessages(roomId: string) {
+export function useChatMessages(roomId: number) {
   return useQuery<GetMessagesResponse>({
     queryKey: QUERY_KEYS.CHAT_MESSAGES(roomId),
     queryFn: () => getChatMessages(roomId),

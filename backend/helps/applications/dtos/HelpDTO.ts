@@ -9,7 +9,7 @@ export interface HelpListResponseDto {
   title: string;
   startDate: Date;
   endDate: Date;
-  category: number;
+  category: number[];
   content: string;
   status: string;
   createdAt: Date;
@@ -22,10 +22,23 @@ export interface HelpDetailResponseDto {
   title: string;
   startDate: Date;
   endDate: Date;
-  category: number;
+  category: number[];
   content: string;
   status: string;
   createdAt: Date;
+}
+
+// 헬프 미리보기 응답 DTO (채팅방용)
+export interface HelpPreviewResponseDto {
+  id: number;
+  seniorNickname: string;
+  title: string;
+  startDate: Date;
+  endDate: Date;
+  category: number[];
+  status: string;
+  createdAt: Date;
+  images?: string[]; // 이미지 URL 배열 추가
 }
 
 // 헬프 생성 요청 DTO (닉네임 기반)
@@ -34,7 +47,7 @@ export interface CreateHelpRequestDto {
   title: string;
   startDate: Date;
   endDate: Date;
-  category: number;
+  category: number[];
   content: string;
 }
 
@@ -43,6 +56,6 @@ export interface UpdateHelpRequestDto {
   title?: string;
   startDate?: Date;
   endDate?: Date;
-  category?: number;
+  category?: number[];
   content?: string;
 }

@@ -7,6 +7,11 @@ export interface IChatRoomRepository {
   // chatRoomId로 특정 채팅방 조회
   findRoomByChatRoomId(chatRoomId: number): Promise<ChatRoom | null>;
 
+  // chatRoomId로 특정 채팅방 조회 (nickname 포함)
+  findRoomWithNicknamesByChatRoomId(
+    chatRoomId: number
+  ): Promise<ChatRoom | null>;
+
   // chatRoomId로 연결된 helpId 목록 조회
   findHelpIdsByChatRoomId(chatRoomId: number): Promise<number[]>;
 }

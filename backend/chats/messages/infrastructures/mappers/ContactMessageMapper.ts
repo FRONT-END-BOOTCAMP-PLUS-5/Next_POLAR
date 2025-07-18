@@ -12,9 +12,9 @@ export class ContactMessageMapper {
   }): ContactMessageEntity {
     return new ContactMessageEntity(
       row.id,
-      row.sender_id, // UUID
       row.contact_room_id,
-      row.nickname, // nickname
+      row.sender_id,
+      row.nickname,
       row.message,
       new Date(row.created_at)
     );
@@ -28,7 +28,7 @@ export class ContactMessageMapper {
       nickname: entity.nickname,
       contactRoomId: entity.contactRoomId,
       message: entity.message,
-      createdAt: entity.createdAt!.toISOString(),
+      createdAt: entity.createdAt?.toString() || '',
     };
   }
 }

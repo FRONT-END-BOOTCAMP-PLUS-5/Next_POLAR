@@ -4,7 +4,7 @@ import { QUERY_KEYS } from '../../constants/api';
 import { CreateMessageResponse } from '../../models/chatDto';
 
 interface SendMessageParams {
-  roomId: string;
+  roomId: number;
   message: string;
 }
 

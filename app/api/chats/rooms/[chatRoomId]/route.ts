@@ -1,26 +1,53 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetChatRoomDetailUseCase } from '@/backend/chats/chatrooms/applications/usecases/GetChatRoomDetailUseCase';
+import { GetChatRoomWithHelpsUseCase } from '@/backend/chats/chatrooms/applications/usecases/GetChatRoomWithHelpsUseCase';
 import { SbChatRoomRepository } from '@/backend/chats/chatrooms/infrastructures/repositories/SbChatRoomRepository';
-
-// GET /api/chats/rooms/[chatRoomId]
+import { SbCommonHelpRepository } from '@/backend/helps/infrastructures/repositories/SbCommonHelpRepository';
+import { SbHelpImageRepository } from '@/backend/images/infrastructures/repositories/SbHelpImageRepository';
 export async function GET(
-  req: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ chatRoomId: string }> }
-) {
-  const { chatRoomId } = await params;
-  const chatRoomIdNum = Number(chatRoomId);
-  if (isNaN(chatRoomIdNum))
-    return NextResponse.json({ error: 'Invalid chatRoomId' }, { status: 400 });
+): Promise<NextResponse> {
+  try {
+    const { chatRoomId } = await params;
+    const roomId = parseInt(chatRoomId);
 
-  // 유스케이스 실행
-  const usecase = new GetChatRoomDetailUseCase(new SbChatRoomRepository());
-  const room = await usecase.execute({ chatRoomId: chatRoomIdNum });
+    if (isNaN(roomId)) {
+      return NextResponse.json(
+        { error: '유효하지 않은 채팅방 ID입니다.' },
+        { status: 400 }
+      );
+    }
 
-  if (!room) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    // UseCase 실행
+    const chatRoomRepository = new SbChatRoomRepository();
+    const helpRepository = new SbCommonHelpRepository();
+    const helpImageRepository = new SbHelpImageRepository();
 
-  // 성공 시 HTTP 상태 코드 콘솔 출력
-  console.log('GET /api/chats/rooms/[chatRoomId] - Status: 200 OK');
+    const getChatRoomWithHelpsUseCase = new GetChatRoomWithHelpsUseCase(
+      chatRoomRepository,
+      helpRepository,
+      helpImageRepository
+    );
 
-  // 결과 반환 (닉네임 기반)
-  return NextResponse.json(room, { status: 200 });
+    const result = await getChatRoomWithHelpsUseCase.execute(roomId);
+
+    if (!result) {
+      console.log(`API] 채팅방 ${roomId}을 찾을 수 없습니다.`);
+      return NextResponse.json(
+        { error: '채팅방을 찾을 수 없습니다.' },
+        { status: 404 }
+      );
+    }
+
+    console.log(
+      `API] 채팅방 ${roomId} 상세 정보 조회 성공 - helps 개수: ${result.helps.length}`
+    );
+    return NextResponse.json(result);
+  } catch (error: unknown) {
+    console.error('[API] 채팅방 상세 정보 조회 중 오류 발생:', error);
+    return NextResponse.json(
+      { error: '서버 오류가 발생했습니다.' },
+      { status: 500 }
+    );
+  }
 }

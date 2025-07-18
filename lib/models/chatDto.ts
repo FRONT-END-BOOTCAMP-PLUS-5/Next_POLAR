@@ -1,3 +1,5 @@
+import { HelpDetail } from './helpDetail';
+
 export interface ChatMessage {
   id: number | string;
   nickname: string;
@@ -31,4 +33,12 @@ export interface CreateMessageRequest {
 export interface CreateMessageResponse {
   success: boolean;
   message: ChatMessage;
+}
+
+export interface ChatRoomDetailWithHelps {
+  chatRoomId: number;
+  juniorNickname: string;
+  seniorNickname: string;
+  createdAt: string;
+  helps: HelpDetail[];
 }

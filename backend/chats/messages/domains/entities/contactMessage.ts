@@ -3,6 +3,7 @@ export class ContactMessageEntity {
   constructor(
     public readonly id: number | undefined, // 메시지 고유 ID
     public contactRoomId: number,
+    public sender_id: string,
     public nickname: string, // 닉네임
     public message: string, // 메시지 내용
     public readonly createdAt: Date | undefined // 생성일시

@@ -1,6 +1,33 @@
-import styles from './History.module.css';
+'use client';
 
-export default function ChatHistoryPage() {
+import { useState, useEffect } from 'react';
+import { useChatRoomDetailWithHelps } from '@/lib/hooks';
+import styles from './History.module.css';
+import Image from 'next/image';
+import { formatDateRange } from '@/lib/utils/dateFormat';
+
+interface PageProps {
+  params: Promise<{ roomId: string }>;
+}
+
+export default function ChatHistoryPage({ params }: PageProps) {
+  const [roomId, setRoomId] = useState<number>(0);
+  const { data } = useChatRoomDetailWithHelps(roomId);
+
+  useEffect(() => {
+    const initializePage = async () => {
+      try {
+        const { roomId } = await params;
+        setRoomId(Number(roomId));
+      } catch {
+        // 에러 무시
+      }
+    };
+    initializePage();
+  }, [params]);
+
+  const helps = data?.helps || [];
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -15,7 +42,7 @@ export default function ChatHistoryPage() {
       <div className={styles.profileBox}>
         <div className={styles.profileImg}></div>
         <div className={styles.profileInfo}>
-          <div className={styles.profileName}>무슨무슨 시니어</div>
+          <div className={styles.profileName}>{data?.seniorNickname}</div>
           <div className={styles.profileRating}>
             <span className={styles.stars}>★★★★★</span>
             <span className={styles.ratingNum}>(31개)</span>
@@ -23,23 +50,26 @@ export default function ChatHistoryPage() {
         </div>
       </div>
       <div className={styles.helpList}>
-        {[1, 2].map((item) => (
-          <div className={styles.helpCard} key={item}>
+        {helps.map((help) => (
+          <div className={styles.helpCard} key={help.id}>
             <div className={styles.helpTextWrap}>
-              <div className={styles.helpTitle}>
-                수해 피해 복구가 필요해요 글자는 여기까지나와요.
-                두줄까지만보여요
-              </div>
+              <div className={styles.helpTitle}>{help.title}</div>
               <div className={styles.helpDate}>
-                2025.07.04(금) ~ 2025.07.06(일)
+                {formatDateRange(help.startDate, help.endDate)}
               </div>
               <div className={styles.helpTag}>
-                <span>💪 무거워요</span>
+                {/* <span>{help.category}</span> */}
               </div>
             </div>
             <div className={styles.helpRight}>
-              <img className={styles.helpImg} src='/help-img.jpg' alt='help' />
-              <div className={styles.helpPoint}>150,000점</div>
+              <Image
+                className={styles.helpImg}
+                src={help.representativeImage || '/help-img.jpg'}
+                alt='help'
+                width={64}
+                height={64}
+              />
+              {/* <div className={styles.helpPoint}>{help.status}점</div> */}
             </div>
           </div>
         ))}
