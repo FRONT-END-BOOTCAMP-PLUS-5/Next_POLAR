@@ -3,7 +3,7 @@ import { UserProfileResponseDto } from '@/backend/users/user/applications/dtos/U
 
 // Entity -> DB object (snake_case)
 export function toDbObject(entity: CommonUserEntity): {
-  id: number;
+  id: string;
   phone_number: string;
   password: string;
   email: string;
@@ -11,6 +11,7 @@ export function toDbObject(entity: CommonUserEntity): {
   profile_img_url: string;
   address: string;
   name: string;
+  nickname: string;
   created_at: string;
 } {
   return {
@@ -22,6 +23,7 @@ export function toDbObject(entity: CommonUserEntity): {
     profile_img_url: entity.profileImgUrl,
     address: entity.address,
     name: entity.name,
+    nickname: entity.nickname,
     created_at:
       entity.createdAt instanceof Date
         ? entity.createdAt.toISOString()
@@ -31,7 +33,7 @@ export function toDbObject(entity: CommonUserEntity): {
 
 // DB object (snake_case) -> Entity
 export function fromDbObject(dbObj: {
-  id: number;
+  id: string;
   phone_number: string;
   password: string;
   email: string;
@@ -39,6 +41,7 @@ export function fromDbObject(dbObj: {
   profile_img_url: string;
   address: string;
   name: string;
+  nickname: string;
   created_at: string;
 }): CommonUserEntity {
   return new CommonUserEntity(
@@ -50,6 +53,7 @@ export function fromDbObject(dbObj: {
     dbObj.profile_img_url,
     dbObj.address,
     dbObj.name,
+    dbObj.nickname,
     new Date(dbObj.created_at)
   );
 }
@@ -95,15 +99,12 @@ export function entityToUserProfileResponseDto(
     console.log(`[Mapper] 오류 발생으로 현재 시간 사용: ${createdAtString}`);
   }
 
-  const dto = {
-    id: entity.id,
+  const dto: UserProfileResponseDto = {
     name: entity.name,
-    email: entity.email,
-    phoneNumber: entity.phoneNumber,
-    age: entity.age,
+    userType: entity.age >= 60 ? 'senior' : 'junior',
     profileImgUrl: entity.profileImgUrl || '',
     address: entity.address,
-    createdAt: createdAtString,
+    nickname: entity.nickname,
   };
 
   console.log(`[Mapper] DTO 변환 완료 - ID: ${entity.id}`, dto);

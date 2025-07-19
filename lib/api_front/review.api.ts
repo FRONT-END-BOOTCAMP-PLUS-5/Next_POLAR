@@ -41,4 +41,12 @@ export const checkReviewCreateAccess = async (nickname: string, helpId: number):
     `${API_ENDPOINTS.REVIEW_CREATE_AUTH_CHECK}?nickname=${nickname}&helpId=${helpId}`
   );
   return response.data.hasAccess;
+};
+
+// 리뷰 상대방 조회
+export const getReviewReceiver = async (nickname: string, helpId: number): Promise<{ receiverNickname: string; message: string }> => {
+  const response = await apiClient.get<{ receiverNickname: string; message: string }>(
+    `${API_ENDPOINTS.REVIEW_RECEIVER}?nickname=${nickname}&helpId=${helpId}`
+  );
+  return response.data;
 }; 

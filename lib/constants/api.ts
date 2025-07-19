@@ -27,6 +27,7 @@ export const API_ENDPOINTS = {
   REVIEWS_RECEIVED: '/api/reviews/received',
   REVIEWS_WRITTEN: '/api/reviews/written',
   REVIEW_CREATE_AUTH_CHECK: '/api/reviews/create/auth-check',
+  REVIEW_RECEIVER: '/api/reviews/receiver',
 
   // 채팅 관련
   CHAT_ROOMS: '/api/chats/rooms',

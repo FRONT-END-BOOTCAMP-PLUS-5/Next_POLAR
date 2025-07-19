@@ -13,7 +13,7 @@ interface Help {
   endDate: string;
   status: string;
   seniorNickname: string;
-  category: number; // sub_category의 id
+  category: number[]; // sub_category의 id 배열
 }
 
 interface CalendarProps {
@@ -99,7 +99,7 @@ export default function CustomCalendar({
         return (
           <div className={styles.tileContent}>
             {dayHelps.slice(0, 5).map((help) => {
-              const bigCategory = getBigCategory(help.category);
+              const bigCategory = getBigCategory(help.category[0] || 0);
               const color = getBigCategoryColor(bigCategory);
               return (
                 <div

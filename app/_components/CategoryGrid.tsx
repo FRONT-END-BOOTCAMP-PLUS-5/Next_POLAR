@@ -1,11 +1,12 @@
 'use client';
 import { useState } from 'react';
 import styles from './CategoryGrid.module.css';
-import { getCategoryName } from '@/lib/utils/categoryUtils';
+import { getCategoryName, getCategoryEmoji } from '@/lib/utils/categoryUtils';
 
 interface CategoryItem {
   id: number;
   text: string;
+  emoji?: string;
   img?: string;
   isMore?: boolean;
 }
@@ -17,12 +18,13 @@ export default function CategoryGrid() {
   const categoryData: CategoryItem[] = Array.from({ length: 19 }, (_, i) => ({
     id: i + 1,
     text: getCategoryName(i + 1),
+    emoji: getCategoryEmoji(i + 1),
   }));
 
   const shownCategories = showMore
     ? categoryData
     : categoryData
-        .slice(0, 3)
+        .slice(0, 4)
         .concat([{ id: 0, img: '', text: '더보기', isMore: true }]);
 
   return (
@@ -67,11 +69,14 @@ export default function CategoryGrid() {
         ) : (
           <div className={styles.category} key={i}>
             <div className={styles.categoryIcon}>
-              <img
+              {/* <img
                 src={cat.img}
                 alt={cat.text}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
+              /> */}
+              <div className={styles.iconPlaceholder}>
+                {cat.emoji}
+              </div>
             </div>
             <div className={styles.categoryText}>{cat.text}</div>
           </div>

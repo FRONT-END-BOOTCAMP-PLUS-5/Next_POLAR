@@ -1,11 +1,9 @@
-// 헬프 리스트 응답 DTO (닉네임 기반)
-export interface HelpListResponseDto {
+import { UserProfileResponseDto } from '@/backend/users/user/applications/dtos/UserDtos';
+
+// 헬프 응답 DTO (닉네임 기반)
+export interface HelpResponseDto {
   id: number;
-  seniorInfo: {
-    nickname: string; // UUID 대신 닉네임
-    name?: string;
-    profileImgUrl?: string;
-  };
+  seniorInfo: UserProfileResponseDto;
   title: string;
   startDate: Date;
   endDate: Date;
@@ -13,20 +11,12 @@ export interface HelpListResponseDto {
   content: string;
   status: string;
   createdAt: Date;
+  images?: string[]; // 헬프 이미지 URL 배열
 }
 
-// 헬프 상세 응답 DTO (닉네임 기반)
-export interface HelpDetailResponseDto {
-  id: number;
-  seniorNickname: string; // UUID 대신 닉네임
-  title: string;
-  startDate: Date;
-  endDate: Date;
-  category: { id: number; point: number }[];
-  content: string;
-  status: string;
-  createdAt: Date;
-}
+// 기존 호환성을 위한 타입 별칭
+export type HelpListResponseDto = HelpResponseDto;
+export type HelpDetailResponseDto = HelpResponseDto;
 
 // 헬프 생성 요청 DTO (닉네임 기반)
 export interface CreateHelpRequestDto {

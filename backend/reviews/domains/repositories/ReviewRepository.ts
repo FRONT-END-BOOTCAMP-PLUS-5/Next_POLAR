@@ -1,5 +1,5 @@
 import { ReviewEntity } from '@/backend/reviews/domains/entities/review';
-import { CreateReviewRequest, ReviewCreateAccessRequestDto } from '@/backend/reviews/applications/dtos/ReviewDtos';
+import { CreateReviewRequest } from '@/backend/reviews/applications/dtos/ReviewDtos';
 
 export interface IReviewRepository {
   // nickname으로 받은 리뷰 리스트 조회
@@ -11,6 +11,6 @@ export interface IReviewRepository {
   // 리뷰 생성
   createByNicknames(request: CreateReviewRequest): Promise<ReviewEntity>;
 
-  // 리뷰 생성 권한 확인
-  checkCreateReviewAccess(dto: ReviewCreateAccessRequestDto): Promise<boolean>;
+  // 리뷰 상대방 nickname 조회
+  findReceiverNickname(writerNickname: string, helpId: number): Promise<string>;
 }

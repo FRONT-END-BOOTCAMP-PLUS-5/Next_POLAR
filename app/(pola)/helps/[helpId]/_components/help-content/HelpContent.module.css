@@ -1,0 +1,107 @@
+.mainContent {
+  padding: 1.25rem;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #ffffff;
+}
+
+.titleAndStatus {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+  gap: 1rem;
+}
+
+.helpTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.helpStatus {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 120px;
+}
+
+.statusItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.statusLabel {
+  font-size: 0.75rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.statusValue {
+  font-size: 0.875rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.profileArea {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 0.75rem;
+}
+
+.profileImage {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profileName {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.profileNickname {
+  font-size: 0.875rem;
+  color: #666;
+  margin-left: 0.5rem;
+}
+
+.helpPeriod {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 1.25rem;
+  padding: 0.75rem 1rem;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
+}
+
+.helpCategories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.categoryTag {
+  padding: 0.375rem 0.75rem;
+  background-color: #e3f2fd;
+  color: #1976d2;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.helpContent {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+  white-space: pre-wrap;
+} 

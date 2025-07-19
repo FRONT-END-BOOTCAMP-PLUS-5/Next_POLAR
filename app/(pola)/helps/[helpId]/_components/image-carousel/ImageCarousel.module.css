@@ -1,0 +1,43 @@
+.imageSection {
+  position: relative;
+  width: 100%;
+  height: 35rem;
+  box-sizing: border-box;
+  overflow: hidden;
+  max-width: none;
+  padding: 2rem 0;
+}
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiperSlide {
+  width: 100%;
+  height: 100%;
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+}
+
+.helpImage {
+  object-fit: cover;
+}
+
+.imagePlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: #f8f9fa;
+}
+
+.mountainIcon {
+  font-size: 3rem;
+} 

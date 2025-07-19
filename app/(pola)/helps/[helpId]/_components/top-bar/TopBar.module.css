@@ -1,0 +1,40 @@
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background-color: #ffffff;
+  border-bottom: 0.0625rem solid #e5e5e5;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.topButtons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.closeButton,
+.heartButton {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+  color: #666;
+  font-size: 1.125rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.closeButton:hover,
+.heartButton:hover {
+  background-color: #e0e0e0;
+} 

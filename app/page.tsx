@@ -1,8 +1,5 @@
 "use client";
-import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
@@ -36,27 +33,7 @@ const slides = [
 export default function Home() {
   const router = useRouter();
 
-  // 1. react-query로 로그인/회원정보(쿠키 기반) 조회
-  //    - 성공 시 user 객체 반환 (role: 'junior' | 'senior' 등)
-  //    - 실패(비회원/쿠키없음) 시 undefined
-  const { data: user } = useQuery({
-    queryKey: ['userInfo'],
-    queryFn: async () => {
-      const res = await axios.get('/api/users', { withCredentials: true });
-      return res.data;
-    },
-    retry: false, // 실패 시 재시도 안함
-  });
-
-  // 2. 회원타입에 따라 자동 리다이렉트
-  //    - 주니어면 /junior, 시니어면 /senior, 비회원이면 잔류
-  useEffect(() => {
-    if (user?.role === 'junior') router.replace('/junior');
-    else if (user?.role === 'senior') router.replace('/senior');
-    // else: 잔류
-  }, [user, router]);
-
-  // 3. 로그인/회원가입 버튼 클릭 시 각 페이지로 이동
+  // 로그인/회원가입 버튼 클릭 시 각 페이지로 이동
   const handleLogin = () => {
     router.push('/login');
   };

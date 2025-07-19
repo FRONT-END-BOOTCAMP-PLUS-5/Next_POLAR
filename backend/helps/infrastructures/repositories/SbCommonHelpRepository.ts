@@ -219,6 +219,11 @@ export class SbCommonHelpRepository implements ICommonHelpRepository {
     try {
       let query = supabase.from('helps').select('*');
 
+      // 특정 헬프 ID 필터링
+      if (filter.id) {
+        query = query.eq('id', filter.id);
+      }
+
       // 서브 카테고리 필터링 (sub_categories 테이블)
       if (filter.subCategoryIds && filter.subCategoryIds.length > 0) {
         const { data: subCategoryFilteredHelps, error: subCategoryError } =
@@ -328,6 +333,11 @@ export class SbCommonHelpRepository implements ICommonHelpRepository {
   async getHelpCountWithFilter(filter: HelpFilterDto): Promise<number> {
     try {
       let query = supabase.from('helps').select('id', { count: 'exact' });
+
+      // 특정 헬프 ID 필터링
+      if (filter.id) {
+        query = query.eq('id', filter.id);
+      }
 
       // 서브 카테고리 필터링 (sub_categories 테이블)
       if (filter.subCategoryIds && filter.subCategoryIds.length > 0) {

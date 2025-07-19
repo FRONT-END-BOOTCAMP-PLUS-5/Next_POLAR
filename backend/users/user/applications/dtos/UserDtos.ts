@@ -26,14 +26,10 @@ export interface UserProfileUpdate {
 
 // 로그인된 사용자 정보 응답 DTO
 export interface UserProfileResponseDto {
-    id: number;
     name: string;
-    email: string;
-    phoneNumber: string;
-    age: number;
+    userType: 'senior' | 'junior';
     profileImgUrl: string;
     address: string;
-    createdAt: string;
     nickname: string;
 }
 

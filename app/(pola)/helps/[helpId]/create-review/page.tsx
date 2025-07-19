@@ -2,15 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { use } from 'react';
-import Image from 'next/image';
 import styles from './CreateReview.module.css';
-import ProfileSummary from './_components/ProfileSummary';
+import UserInfoSection from '@/app/_components/commons/common-sections/user-info/UserInfoSection';
 import Button from './_components/Button';
 import Input from './_components/Input';
 import { useCreateReview } from '@/lib/hooks/review/useCreateReview';
 import { useAuthStore } from '@/lib/stores/authStore';
 import StarRating from '@/app/_components/commons/ui/StarRating';
 import ImageUploader from '@/app/_components/commons/imageUploader/ImageUploader';
+import { useReviewReceiver } from '@/lib/hooks/review/useReviewReceiver';
 import { useUserProfile } from '@/lib/hooks/useUserProfile';
 import { useImageContext } from '@/lib/contexts/ImageContext';
 
@@ -25,9 +25,10 @@ export default function CreateReviewPage({ params }: { params: Promise<{ helpId:
   const [success, setSuccess] = useState<boolean>(false);
 
   const nickname = useAuthStore.getState().user?.nickname;
-  const { data: userProfile, isLoading: profileLoading, isError: profileError } = useUserProfile(nickname || '');
+  const { data: reviewReceiver, isLoading: receiverLoading, isError: receiverError } = useReviewReceiver(nickname || '', Number(helpId));
+  const { data: receiverProfile, isLoading: profileLoading, isError: profileError } = useUserProfile(reviewReceiver?.receiverNickname || '');
   const { imageFiles, clearImages } = useImageContext();
-
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -70,7 +71,9 @@ export default function CreateReviewPage({ params }: { params: Promise<{ helpId:
 
   return (
     <div className={styles.container}>
-      {userProfile && <ProfileSummary user={userProfile} />}
+      {receiverProfile && receiverProfile.data && (
+        <UserInfoSection data={receiverProfile.data} />
+      )}
       {loading ? (
         <div className={styles.loadingContainer}>로딩 중...</div>
       ) : error ? (

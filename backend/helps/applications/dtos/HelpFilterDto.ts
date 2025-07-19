@@ -1,4 +1,5 @@
 export interface HelpFilterDto {
+  id?: number; // 특정 헬프 ID
   categoryIds?: number[]; // 메인 카테고리 ID 배열 (categories 테이블)
   subCategoryIds?: number[]; // 서브 카테고리 ID 배열 (sub_categories 테이블)
   startDate?: string; // 시작 날짜 (ISO string)

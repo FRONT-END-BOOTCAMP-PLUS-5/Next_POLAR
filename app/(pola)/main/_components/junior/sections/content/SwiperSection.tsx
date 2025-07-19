@@ -15,7 +15,7 @@ interface Help {
   endDate: string;
   status: string;
   seniorNickname: string;
-  category: number;
+  category: number[];
 }
 
 interface SwiperSectionProps {

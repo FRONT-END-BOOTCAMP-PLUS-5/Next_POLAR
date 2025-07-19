@@ -6,6 +6,7 @@ import { HelpPaginationResponseDto } from '@/backend/helps/applications/dtos/Hel
 import axios from 'axios';
 
 export interface HelpFilterParams {
+  id?: number; // 특정 헬프 ID
   categoryIds?: number[]; // 메인 카테고리 ID 배열 (categories 테이블)
   subCategoryIds?: number[]; // 서브 카테고리 ID 배열 (sub_categories 테이블)
   startDate?: string;
@@ -45,6 +46,9 @@ export const getHelpList = async (
   try {
     const params = new URLSearchParams();
 
+    if (filter?.id) {
+      params.append('id', filter.id.toString());
+    }
     if (filter?.categoryIds && filter.categoryIds.length > 0) {
       params.append('categoryIds', filter.categoryIds.join(','));
     }
@@ -85,6 +89,9 @@ export const getHelpListWithPagination = async (
     const params = new URLSearchParams();
     params.append('pagination', 'true');
 
+    if (filter?.id) {
+      params.append('id', filter.id.toString());
+    }
     if (filter?.categoryIds && filter.categoryIds.length > 0) {
       params.append('categoryIds', filter.categoryIds.join(','));
     }

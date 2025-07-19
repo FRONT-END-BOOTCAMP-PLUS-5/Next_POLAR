@@ -7,7 +7,7 @@ export const mockHelps = [
     endDate: '2025-07-15',
     status: 'open',
     seniorNickname: '김시니어',
-    category: 8 // 지능 (장보기)
+    category: [8] // 지능 (장보기)
   },
   {
     id: 2,
@@ -17,7 +17,7 @@ export const mockHelps = [
     endDate: '2025-07-17',
     status: 'connecting',
     seniorNickname: '이시니어',
-    category: 2 // 힘 (청소)
+    category: [2] // 힘 (청소)
   },
   {
     id: 3,
@@ -27,7 +27,7 @@ export const mockHelps = [
     endDate: '2025-07-20',
     status: 'open',
     seniorNickname: '박시니어',
-    category: 6 // 지능 (스마트폰)
+    category: [6] // 지능 (스마트폰)
   },
   {
     id: 4,
@@ -37,7 +37,7 @@ export const mockHelps = [
     endDate: '2025-07-22',
     status: 'open',
     seniorNickname: '최시니어',
-    category: 1 // 힘 (짐 나르기)
+    category: [1] // 힘 (짐 나르기)
   },
   {
     id: 5,
@@ -47,7 +47,7 @@ export const mockHelps = [
     endDate: '2025-07-25',
     status: 'open',
     seniorNickname: '정시니어',
-    category: 14 // 매력 (가벼운 대화)
+    category: [14] // 매력 (가벼운 대화)
   },
   {
     id: 6,
@@ -57,7 +57,7 @@ export const mockHelps = [
     endDate: '2025-07-17',
     status: 'connecting',
     seniorNickname: '한시니어',
-    category: 11 // 민첩 (콘서트 예매)
+    category: [11] // 민첩 (콘서트 예매)
   },
   {
     id: 7,
@@ -67,7 +67,7 @@ export const mockHelps = [
     endDate: '2025-07-30',
     status: 'open',
     seniorNickname: '윤시니어',
-    category: 15 // 매력 (간단한 상담)
+    category: [15] // 매력 (간단한 상담)
   },
   {
     id: 8,
@@ -77,7 +77,7 @@ export const mockHelps = [
     endDate: '2025-07-28',
     status: 'open',
     seniorNickname: '임시니어',
-    category: 8 // 지능 (재능기부)
+    category: [8] // 지능 (재능기부)
   },
   {
     id: 9,
@@ -87,7 +87,7 @@ export const mockHelps = [
     endDate: '2025-07-18',
     status: 'open',
     seniorNickname: '강시니어',
-    category: 9 // 민첩 (가벼운 배달)
+    category: [9] // 민첩 (가벼운 배달)
   },
   {
     id: 10,
@@ -97,7 +97,7 @@ export const mockHelps = [
     endDate: '2025-07-23',
     status: 'open',
     seniorNickname: '조시니어',
-    category: 7 // 지능 (대리 상담)
+    category: [7] // 지능 (대리 상담)
   },
   {
     id: 11,
@@ -107,7 +107,7 @@ export const mockHelps = [
     endDate: '2025-07-26',
     status: 'open',
     seniorNickname: '백시니어',
-    category: 16 // 매력 (티켓팅 줄 서기)
+    category: [16] // 매력 (티켓팅 줄 서기)
   },
   {
     id: 12,
@@ -117,6 +117,6 @@ export const mockHelps = [
     endDate: '2025-07-19',
     status: 'connecting',
     seniorNickname: '남시니어',
-    category: 3 // 힘 (수확)
+    category: [3] // 힘 (수확)
   }
 ]; 

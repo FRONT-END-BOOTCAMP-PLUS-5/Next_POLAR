@@ -12,7 +12,7 @@ import { UserProfileResponseDto } from "@/backend/users/user/applications/dtos/U
 import { extractData } from "@/lib/utils/apiUtils";
 import UserInfoSection from "@/app/_components/commons/common-sections/user-info/UserInfoSection";
 import UserRecivedReviewsPreview from "./_components/sections/reviews-preview/UserRecivedReviewsPreview";
-import { useReceivedReviews } from "@/lib/hooks/useReceivedReviews";
+import { useReceivedReviews } from "@/lib/hooks/review/useReceivedReviews";
 import { useAuthStore } from "@/lib/stores/authStore";
 
 const UserProfilePage: React.FC = () => {
@@ -44,7 +44,7 @@ const UserProfilePage: React.FC = () => {
   const JuniorComponent = (
     <div className={styles.container}>
       <h1>주니어 프로필</h1>
-      {userData && <UserInfoSection data={userData} userRole="junior" />}
+      {userData && <UserInfoSection data={userData} />}
 
       <UserTierSection
         season="2025 - 1시즌"
@@ -119,7 +119,7 @@ const UserProfilePage: React.FC = () => {
   const SeniorComponent = (
     <div className={styles.container}>
       <h1>시니어 프로필</h1>
-      {userData && <UserInfoSection data={userData} userRole="senior" />}
+      {userData && <UserInfoSection data={userData} />}
 
       <UserHelpsSection
         title="나의 헬프 기록"
@@ -166,7 +166,7 @@ const UserProfilePage: React.FC = () => {
     >
       <div className={styles.container}>
         <h1>유저프로필</h1>
-        {userData && <UserInfoSection data={userData} userRole="junior" />}
+        {userData && <UserInfoSection data={userData} />}
 
         <UserTierSection
           season="2025 - 1시즌"

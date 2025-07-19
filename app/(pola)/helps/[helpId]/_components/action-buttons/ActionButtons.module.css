@@ -1,0 +1,76 @@
+.bottomButtonContainer {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.25rem;
+  background-color: #ffffff;
+  border-top: 0.0625rem solid #e5e5e5;
+  z-index: 100;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.applyButton {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-radius: 0.75rem;
+  background-color: #007bff;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+  box-sizing: border-box;
+}
+
+.applyButton:hover {
+  background-color: #0056b3;
+}
+
+.plusIcon {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.checkIcon {
+  font-size: 1.125rem;
+}
+
+.seniorButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.completeButton {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-radius: 0.75rem;
+  background-color: #28a745;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  box-sizing: border-box;
+}
+
+.completeButton:hover:not(:disabled) {
+  background-color: #1e7e34;
+}
+
+.completeButton:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.completeButton.loading {
+  background-color: #6c757d;
+} 

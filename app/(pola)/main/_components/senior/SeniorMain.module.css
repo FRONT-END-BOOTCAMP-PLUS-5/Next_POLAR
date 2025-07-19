@@ -1,12 +1,19 @@
 .container {
-  background: #fff;
-  height: 100%;
-  width: 80%;
-  margin: 0 auto;
-  font-family: 'Pretendard', 'sans-serif';
+  align-items: center;
+  gap: 1.5rem;
+  width: calc(100% - 3rem);
+  padding: 3rem 1.5rem;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* 스크롤바 숨기기 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Webkit 브라우저용 스크롤바 숨기기 */
+.container::-webkit-scrollbar {
+  display: none;
 }
 
 .header {
@@ -88,12 +95,4 @@
   padding: 12px 32px;
   margin-bottom: 16px;
   cursor: pointer;
-}
-
-.moreGuide {
-  font-size: 1rem;
-  color: #222;
-  text-align: center;
-  margin-top: 32px;
-  font-weight: 600;
 }

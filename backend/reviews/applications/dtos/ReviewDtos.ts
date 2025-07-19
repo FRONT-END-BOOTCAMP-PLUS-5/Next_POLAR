@@ -2,6 +2,7 @@
 export interface CreateReviewRequest {
   helpId: number;
   writerNickname: string; // nickname
+  receiverNickname?: string; // 상대방 nickname (자동 계산됨)
   rating: number;
   text: string;
   reviewImgUrl?: string; // 리뷰 이미지 URL (선택사항)
@@ -29,10 +30,4 @@ export interface ReviewResponseDto {
   text: string;
   reviewImgUrl: string | null;
   createdAt: string;
-}
-
-// 리뷰 생성 권한 여부 요청 DTO
-export interface ReviewCreateAccessRequestDto {
-  nickname: string;
-  helpId: number;
 }

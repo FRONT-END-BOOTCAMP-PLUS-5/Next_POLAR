@@ -6,17 +6,14 @@ import { UserProfileResponseDto } from "@/backend/users/user/applications/dtos/U
 
 interface UserInfoSectionProps {
   data: UserProfileResponseDto;
-  userRole: string;
 }
 
 const UserInfoSection: React.FC<UserInfoSectionProps> = ({
   data,
-  userRole,
 }) => {
-  console.log(data);
-  const { nickname, name, profileImgUrl } = data;
 
-  const userType = userRole === "senior" ? "Sr." : "Jr.";
+  const { nickname, name, profileImgUrl, userType } = data;
+
   const rating = 4.5;
 
   return (
@@ -44,7 +41,7 @@ const UserInfoSection: React.FC<UserInfoSectionProps> = ({
         {/* 유저 이름 */}
         <div className={styles.userNameContainer}>
           <span>{name} 님</span>
-          <div className={styles.userTypeBadge}>{userType}</div>
+          <div className={styles.userTypeBadge}>{userType === "senior" ? "Sr." : "Jr."}</div>
         </div>
 
         {/* 유저 닉네임 */}
