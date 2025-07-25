@@ -1,7 +1,6 @@
 import { CommonHelpEntity } from '@/backend/helps/domains/entities/CommonHelpEntity';
 import { ICommonHelpRepository } from '@/backend/helps/domains/repositories/ICommonHelpRepository';
 import { HelpFilterDto } from '@/backend/helps/applications/dtos/HelpFilterDto';
-import { HelpPaginationResponseDto } from '@/backend/helps/applications/dtos/HelpPaginationDto';
 
 // 헬프 리스트 조회 UseCase (엔티티 반환)
 export class GetHelpListUseCase {

@@ -26,8 +26,7 @@ export async function GET(
   }
 
   // 쿠키에서 사용자 ID 가져오기
-  const userData = getNicknameFromCookie(request);
-  const { nickname } = userData || {};
+  const { nickname } = getNicknameFromCookie(request) || {};
 
   if (!nickname) {
     console.warn(

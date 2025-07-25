@@ -5,7 +5,7 @@ export interface ChatMessage {
   nickname: string;
   contactRoomId: number;
   message: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
 export interface ChatRoom {

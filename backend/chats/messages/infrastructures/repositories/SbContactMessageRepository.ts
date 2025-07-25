@@ -3,15 +3,15 @@ import { ContactMessageEntity } from '@/backend/chats/messages/domains/entities/
 import { IContactMessageRepository } from '@/backend/chats/messages/domains/repositories/ContactMessageRepository';
 import { ContactMessageMapper } from '@/backend/chats/messages/infrastructures/mappers/ContactMessageMapper';
 import { getUuidByNickname } from '@/lib/getUserData';
+import { ContactMessageRequestDto } from '../../applications/dtos/ContactMessageDtos';
 
 export class SbContactMessageRepository implements IContactMessageRepository {
   // 메시지 저장
-  async create(
-    requestDto: { nickname: string; contactRoomId: number; message: string }
+  async createChatMessage(
+    requestDto: ContactMessageRequestDto
   ): Promise<ContactMessageEntity> {
-    // nickname으로 UUID 가져오기
     const senderUuid = await getUuidByNickname(requestDto.nickname);
-    
+
     const { data, error } = await supabase
       .from('contact_messages')
       .insert({

@@ -6,7 +6,7 @@ export class ContactMessageEntity {
     public sender_id: string,
     public nickname: string, // 닉네임
     public message: string, // 메시지 내용
-    public readonly createdAt: Date | undefined // 생성일시
+    public readonly createdAt: string // 생성일시
   ) {}
 
   toJSON() {

@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 // import { useRouter } from "next/navigation";
-import ChatRoom from "./ChatRoom";
-import HelpInfo from "./_components/HelpInfo";
-import styles from "./page.module.css";
-import { useAuthStore } from "@/lib/stores/authStore";
-import Link from "next/link";
-import { useChatRoomDetailWithHelps } from "@/lib/hooks/chats/useChatRoomDetailWithHelps";
+import ChatRoom from './ChatRoom';
+import HelpInfo from './_components/HelpInfo';
+import styles from './page.module.css';
+import { useAuthStore } from '@/lib/stores/authStore';
+import Link from 'next/link';
+import { useChatRoomDetailWithHelps } from '@/lib/hooks/chats/useChatRoomDetailWithHelps';
 
 interface PageProps {
   params: Promise<{ roomId: string }>;
@@ -24,7 +24,7 @@ export default function ChatRoomPage({ params }: PageProps) {
 
   const helpData = chatRoomWithHelps?.helps?.[0] || null;
   const loading = isLoading;
-  const error = queryError ? "Help 정보를 불러오는데 실패했습니다." : null;
+  const error = queryError ? 'Help 정보를 불러오는데 실패했습니다.' : null;
 
   const nickname = user?.nickname;
   // const router = useRouter();
@@ -51,7 +51,7 @@ export default function ChatRoomPage({ params }: PageProps) {
             <span className={styles.tag}>로딩</span>
           </div>
         </div>
-        <span className={styles.prevHelp}>이전 help 보기 {">"}</span>
+        <span className={styles.prevHelp}>이전 help 보기 {'>'}</span>
       </div>
     );
   }
@@ -67,7 +67,7 @@ export default function ChatRoomPage({ params }: PageProps) {
           </div>
         </div>
         <Link href={`/chats/${roomId}/history`} className={styles.prevHelp}>
-          이전 help 보기 {">"}
+          이전 help 보기 {'>'}
         </Link>
       </div>
     );
@@ -77,7 +77,7 @@ export default function ChatRoomPage({ params }: PageProps) {
     <div className={styles.container}>
       <div className={styles.topBar}>
         <span className={styles.seniorName}>
-          {chatRoomWithHelps?.seniorNickname}
+          {chatRoomWithHelps?.juniorNickname}
         </span>
       </div>
       {/* 헬프 정보 */}

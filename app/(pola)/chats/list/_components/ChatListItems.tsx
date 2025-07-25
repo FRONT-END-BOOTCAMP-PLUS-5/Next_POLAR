@@ -16,9 +16,9 @@ export default function ChatListItems({ chatRooms }: ChatListItemsProps) {
         <li className={styles.emptyState}>채팅방이 없습니다.</li>
       ) : (
         chatRooms.map((room) => (
-          <li key={room.chatRoomId}>
+          <li key={room.contactRoomId}>
             <Link
-              href={`/chats/${room.chatRoomId}`}
+              href={`/chats/${room.contactRoomId}`}
               className={styles.chatItem}
             >
               <Link href={`/user/profile/${room.opponentProfile.nickname}`}>
@@ -33,7 +33,9 @@ export default function ChatListItems({ chatRooms }: ChatListItemsProps) {
                 </div>
               </Link>
               <div className={styles.info}>
-                <div className={styles.name}>{room.opponentProfile.name}</div>
+                <div className={styles.name}>
+                  {room.opponentProfile.nickname}
+                </div>
                 <div className={styles.tags}>
                   {room.latestHelp?.category &&
                   room.latestHelp.category.length > 0 ? (

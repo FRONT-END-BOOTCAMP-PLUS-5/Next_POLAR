@@ -1,5 +1,5 @@
 import { ContactMessageEntity } from '@/backend/chats/messages/domains/entities/contactMessage';
-import { ContactMessageResponseDto } from '../../applications/dtos/ContactMessageDtos';
+import { GetContactMessageResponseDto } from '../../applications/dtos/ContactMessageDtos';
 
 export class ContactMessageMapper {
   static toEntity(row: {
@@ -16,19 +16,19 @@ export class ContactMessageMapper {
       row.sender_id,
       row.nickname,
       row.message,
-      new Date(row.created_at)
+      row.created_at
     );
   }
 
   static toResponseDto(
     entity: ContactMessageEntity
-  ): ContactMessageResponseDto {
+  ): GetContactMessageResponseDto {
     return {
       id: entity.id!,
       nickname: entity.nickname,
       contactRoomId: entity.contactRoomId,
       message: entity.message,
-      createdAt: entity.createdAt?.toString() || '',
+      createdAt: entity.createdAt,
     };
   }
 }

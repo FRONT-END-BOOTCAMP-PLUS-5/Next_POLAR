@@ -1,13 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetContactRoomsUseCase } from '@/backend/chats/contactRooms/applications/usecases/GetContactRoomsUseCase';
+import { GetContactRoomHistoryUseCase } from '@/backend/chats/contactRooms/applications/usecases/GetContactRoomHistoryUseCase';
 import { SbContactRoomRepository } from '@/backend/chats/contactRooms/infrastructures/repositories/SbContactRoomRepository';
 import { SbCommonHelpRepository } from '@/backend/helps/infrastructures/repositories/SbCommonHelpRepository';
 import { SbHelpImageRepository } from '@/backend/images/infrastructures/repositories/SbHelpImageRepository';
 import { SbUserRepository } from '@/backend/users/user/infrastructures/repositories/SbUserRepository';
 import { getNicknameFromCookie } from '@/lib/jwt';
 
-export async function GET(request: NextRequest): Promise<NextResponse> {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ chatRoomId: string }> }
+): Promise<NextResponse> {
   try {
+    const { chatRoomId } = await params;
+    const roomId = parseInt(chatRoomId, 10);
+
+    if (isNaN(roomId)) {
+      return NextResponse.json(
+        { error: '유효하지 않은 채팅방 ID입니다.' },
+        { status: 400 }
+      );
+    }
+
     // 현재 사용자 정보 가져오기 (쿠키에서)
     const { nickname } = getNicknameFromCookie(request) || {};
     if (!nickname) {
@@ -23,24 +36,31 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const helpImageRepository = new SbHelpImageRepository();
     const userRepository = new SbUserRepository();
 
-    const usecase = new GetContactRoomsUseCase(
+    const useCase = new GetContactRoomHistoryUseCase(
       contactRoomRepository,
       helpRepository,
       helpImageRepository,
       userRepository
     );
 
-    const result = await usecase.execute(nickname);
+    const result = await useCase.execute(roomId, nickname);
+
+    if (!result) {
+      return NextResponse.json(
+        { error: '채팅방을 찾을 수 없습니다.' },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    console.error('채팅방 목록 조회 중 오류:', error);
+    console.error('채팅방 히스토리 조회 중 오류:', error);
     return NextResponse.json(
       {
         error:
           error instanceof Error
             ? error.message
-            : '채팅방 목록 조회 중 오류가 발생했습니다.',
+            : '채팅방 히스토리 조회 중 오류가 발생했습니다.',
       },
       { status: 500 }
     );

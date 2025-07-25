@@ -1,16 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useUserProfile } from '@/lib/hooks';
-import { useAuthStore } from '@/lib/stores/authStore';
 import styles from './History.module.css';
 import Image from 'next/image';
 import DummyUser from '@/public/images/dummies/dummy_user.png';
 import HelpListCard from '@/app/_components/commons/list-card/help-list-card/HelpListCard';
 import type { HelpListResponseDto } from '@/backend/helps/applications/dtos/HelpDTO';
 import Link from 'next/link';
-import { useChatRoomDetailWithHelps } from '@/lib/hooks/chats';
-import { useUserReviewStats } from '@/lib/hooks/review';
+import { useChatRoomHistory } from '@/lib/hooks/chats';
 
 interface PageProps {
   params: Promise<{ roomId: string }>;
@@ -18,8 +15,7 @@ interface PageProps {
 
 export default function ChatHistoryPage({ params }: PageProps) {
   const [roomId, setRoomId] = useState<number>(0);
-  const { data } = useChatRoomDetailWithHelps(roomId);
-  const { user } = useAuthStore();
+  const { data } = useChatRoomHistory(roomId);
 
   useEffect(() => {
     const initializePage = async () => {
@@ -35,27 +31,15 @@ export default function ChatHistoryPage({ params }: PageProps) {
 
   const helps = data?.helps || [];
 
-  // 상대방 nickname 결정 (로그인한 사용자가 아닌 상대방)
-  const opponentNickname =
-    data?.juniorNickname === user?.nickname
-      ? data?.seniorNickname
-      : data?.juniorNickname;
-
-  // 상대방 프로필 정보 조회
-  const { data: opponentProfile } = useUserProfile(opponentNickname || '');
-
-  // 상대방 리뷰 통계 조회
-  const { data: reviewStats } = useUserReviewStats(opponentNickname || '');
-
   // ConnectedHelpDto를 HelpListResponseDto로 변환
   const convertedHelps: HelpListResponseDto[] = helps.map((help) => ({
     id: help.id,
     seniorInfo: {
-      nickname: opponentNickname || '',
-      name: opponentProfile?.data?.name || opponentNickname || '',
+      nickname: data?.opponentProfile.nickname || '',
+      name: data?.opponentProfile.name || data?.opponentProfile.nickname || '',
       userRole: 'senior' as const,
-      profileImgUrl: opponentProfile?.data?.profileImgUrl || '',
-      address: opponentProfile?.data?.address || '',
+      profileImgUrl: data?.opponentProfile.profileImgUrl || '',
+      address: data?.opponentProfile.address || '',
     },
     title: help.title,
     startDate: help.startDate,
@@ -73,10 +57,10 @@ export default function ChatHistoryPage({ params }: PageProps) {
         <span className={styles.title}>이전 help 기록</span>
       </div>
       <div className={styles.profileBox}>
-        <Link href={`/user/profile/${opponentNickname}`}>
+        <Link href={`/user/profile/${data?.opponentProfile.nickname}`}>
           <div className={styles.profileImg}>
             <Image
-              src={opponentProfile?.data?.profileImgUrl || DummyUser}
+              src={data?.opponentProfile.profileImgUrl || DummyUser}
               alt='Profile'
               width={64}
               height={64}
@@ -86,15 +70,15 @@ export default function ChatHistoryPage({ params }: PageProps) {
         </Link>
         <div className={styles.profileInfo}>
           <div className={styles.profileName}>
-            {opponentProfile?.data?.name || opponentNickname}
+            {data?.opponentProfile.nickname}
           </div>
           <div className={styles.profileRating}>
             <span className={styles.stars}>
-              {'★'.repeat(Math.round(reviewStats?.averageRating || 0))}
-              {'☆'.repeat(5 - Math.round(reviewStats?.averageRating || 0))}
+              {'★'.repeat(Math.round(data?.reviewStats.averageRating || 0))}
+              {'☆'.repeat(5 - Math.round(data?.reviewStats.averageRating || 0))}
             </span>
             <span className={styles.ratingNum}>
-              ({reviewStats?.reviewCount || 0}개)
+              ({data?.reviewStats.reviewCount || 0}개)
             </span>
           </div>
         </div>

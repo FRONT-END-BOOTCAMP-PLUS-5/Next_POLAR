@@ -45,7 +45,6 @@ export const API_ENDPOINTS = {
 
   // 채팅 관련
   CHAT_ROOMS: '/api/chats/rooms',
-  CHAT_ROOMS_WITH_DETAILS: '/api/chats/rooms/list-with-details',
   CHAT_ROOM_DETAIL: (roomId: number) => `/api/chats/rooms/${roomId}`,
   CHAT_ROOM_MESSAGES: (roomId: number) => `/api/chats/rooms/${roomId}/messages`,
   CHAT_ROOM_AUTH_CHECK: '/api/chats/rooms/auth-check',
@@ -102,7 +101,6 @@ export const QUERY_KEYS = {
 
   // 채팅 관련
   CHAT_ROOMS: ['chats', 'rooms'] as const,
-  CHAT_ROOMS_WITH_DETAILS: ['chats', 'rooms', 'with-details'] as const,
   CHAT_MESSAGES: (roomId: number) =>
     ['chats', 'rooms', roomId, 'messages'] as const,
   CHAT_ROOM_DETAIL: (roomId: number) =>

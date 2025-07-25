@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { CheckChatRoomAccessUseCase } from '@/backend/chats/chatrooms/applications/usecases/CheckChatRoomAccessUseCase';
-import { SbChatRoomRepository } from '@/backend/chats/chatrooms/infrastructures/repositories/SbChatRoomRepository';
+import { CheckContactRoomAccessUseCase } from '@/backend/chats/contactRooms/applications/usecases/CheckContactRoomAccessUseCase';
+import { SbContactRoomRepository } from '@/backend/chats/contactRooms/infrastructures/repositories/SbContactRoomRepository';
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const nickname = searchParams.get('nickname');
     const chatRoomId = parseInt(searchParams.get('chatRoomId') || '0');
-    
+
     if (!nickname) {
       return NextResponse.json(
         { error: 'Nickname is required' },
@@ -23,9 +23,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const chatRoomRepo = new SbChatRoomRepository();
-    const useCase = new CheckChatRoomAccessUseCase(chatRoomRepo);
-    
+    const contactRoomRepo = new SbContactRoomRepository();
+    const useCase = new CheckContactRoomAccessUseCase(contactRoomRepo);
+
     const hasAccess = await useCase.execute(nickname, chatRoomId);
 
     return NextResponse.json({ hasAccess }, { status: 200 });
