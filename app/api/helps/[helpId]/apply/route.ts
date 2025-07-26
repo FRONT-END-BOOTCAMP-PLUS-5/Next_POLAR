@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SbHelpApplicantRepository } from '@/backend/helps/infrastructures/SbHelpApplicantRepository';
+import { SbHelpApplicantRepository } from '@/backend/helps/infrastructures/repositories/SbHelpApplicantRepository';
 import { ApplyHelpUseCase } from '@/backend/helps/applications/usecases/HelpApplicationUseCases';
 import { ApplyHelpResponseDto } from '@/backend/helps/applications/dtos/HelpApplicationDto';
 import { getUuidByNickname } from '@/lib/getUserData';

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { JuniorHelpCompletionUseCase } from '@/backend/juniors/helps/applications/usecases/JuniorHelpCompletionUseCase';
-import { HelpStatusRepository } from '@/backend/helps/infrastructures/repositories/SbHelpStatusRepository';
+import { HelpStatusRepository } from '@/backend/common/repositories/HelpStatusRepository';
 import { JuniorHelpStatusInfrastructure } from '@/backend/juniors/helps/infrastructures/repositories/JuniorHelpStatusInfrastructure';
 import { JuniorsHelpCompletionDto } from '@/backend/juniors/helps/applications/dtos/JuniorsHelpCompletionDto';
 
