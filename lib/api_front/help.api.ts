@@ -18,7 +18,7 @@ export interface HelpFilterParams {
 
 export const postHelp = async (formData: FormData) => {
   const response = await apiClient.post<ApiCreateHelpResponse>(
-    API_ENDPOINTS.SENIOR_HELPS,
+    API_ENDPOINTS.SENIOR_HELPS_CREATE,
     formData,
     {
       headers: {
@@ -133,7 +133,7 @@ export const getHelpListWithPagination = async (
 
 export const getHelpApplicants = async (helpId: number) => {
   try {
-    const response = await axios.get(API_ENDPOINTS.HELP_APPLICANTS(helpId));
+    const response = await apiClient.get(API_ENDPOINTS.HELP_APPLICANTS(helpId));
     return response.data;
   } catch (error) {
     console.error('Help 지원자 리스트 조회 오류:', error);
@@ -143,7 +143,7 @@ export const getHelpApplicants = async (helpId: number) => {
 
 export const applyHelp = async (helpId: number) => {
   try {
-    const response = await axios.post(API_ENDPOINTS.HELP_APPLY(helpId));
+    const response = await apiClient.post(API_ENDPOINTS.HELP_APPLY(helpId));
     return response.data;
   } catch (error) {
     console.error('Help 지원 오류:', error);
@@ -156,7 +156,7 @@ export const acceptHelpApplicant = async (
   juniorNickname: string
 ) => {
   try {
-    const response = await axios.post(
+    const response = await apiClient.post(
       API_ENDPOINTS.HELP_ACCEPT_APPLICANT(helpId, juniorNickname)
     );
     return response.data;
@@ -168,7 +168,7 @@ export const acceptHelpApplicant = async (
 
 export const checkHelpApplicationStatus = async (helpId: number) => {
   try {
-    const response = await axios.get(
+    const response = await apiClient.get(
       API_ENDPOINTS.HELP_APPLICATION_STATUS(helpId)
     );
     return response.data;
@@ -180,10 +180,38 @@ export const checkHelpApplicationStatus = async (helpId: number) => {
 
 export const getSeniorHelps = async () => {
   try {
-    const response = await axios.get(API_ENDPOINTS.SENIOR_HELPS_LIST);
+    const response = await apiClient.get(API_ENDPOINTS.SENIOR_HELPS_LIST);
     return response.data;
   } catch (error) {
     console.error('시니어 헬프 리스트 조회 오류:', error);
+    throw error;
+  }
+};
+
+export const requestSeniorHelpCompletion = async (helpId: number) => {
+  try {
+    const response = await apiClient.post(
+      API_ENDPOINTS.SENIOR_HELP_COMPLETION(helpId)
+    );
+    return response.data;
+  } catch (error) {
+    console.error('시니어 헬프 완료 요청 오류:', error);
+    throw error;
+  }
+};
+
+export const verifyJuniorHelpCompletion = async (
+  helpId: number,
+  verificationCode: string
+) => {
+  try {
+    const response = await apiClient.post(
+      API_ENDPOINTS.JUNIOR_HELP_COMPLETION(helpId),
+      { verificationCode }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('주니어 헬프 완료 인증 오류:', error);
     throw error;
   }
 };

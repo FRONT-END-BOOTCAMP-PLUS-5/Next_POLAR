@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useHelpVerification } from '@/lib/contexts/HelpVerificationContext';
+import { requestSeniorHelpCompletion } from '@/lib/api_front/help.api';
 
 interface CompletionRequest {
   helpId: number;
@@ -29,18 +30,7 @@ export function useSeniorHelpCompletion() {
       setError(null);
 
       try {
-        const response = await fetch(`/api/seniors/help/${helpId}/completion`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || '완료 요청에 실패했습니다.');
-        }
+        const data = await requestSeniorHelpCompletion(helpId);
 
         const verificationCode = data.verificationCode;
 

@@ -1,6 +1,6 @@
 import { supabase } from '@/backend/common/utils/supabaseClient';
 import { IHelpStatusRepository } from '@/backend/common/repositories/IHelpStatusRepository';
-import { HelpStatus } from '@/backend/helps/domains/entities/HelpStatus';
+import { HelpStatus } from '@/backend/common/entities/HelpStatus';
 
 // 에러 처리 헬퍼 함수
 const handleSupabaseError = (error: unknown, operation: string): never => {

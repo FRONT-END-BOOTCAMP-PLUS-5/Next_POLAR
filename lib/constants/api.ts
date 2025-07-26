@@ -29,9 +29,13 @@ export const API_ENDPOINTS = {
     `/api/helps/${helpId}/applicants/${juniorNickname}/accept`,
   JUNIOR_HELPS: '/api/helps/junior',
   JUNIOR_ACCEPTED_HELPS: '/api/juniors/helps/accepted',
-  SENIOR_HELPS: '/api/seniors/help',
+  SENIOR_HELPS_CREATE: '/api/seniors/helps',
   SENIOR_HELPS_LIST: '/api/seniors/helps',
-  SENIOR_HELP_DETAIL: (id: string) => `/api/seniors/help/${id}`,
+  SENIOR_HELP_DETAIL: (id: string) => `/api/seniors/helps/${id}`,
+  SENIOR_HELP_COMPLETION: (helpId: number) =>
+    `/api/seniors/helps/${helpId}/completion`,
+  JUNIOR_HELP_COMPLETION: (helpId: number) =>
+    `/api/juniors/helps/${helpId}/completion`,
 
   // 리뷰 관련
   REVIEWS: '/api/reviews',
@@ -88,7 +92,7 @@ export const QUERY_KEYS = {
   HELPS: ['helps'] as const,
   HELP_DETAIL: (id: string) => ['helps', 'detail', id] as const,
   JUNIOR_HELPS: ['helps', 'junior'] as const,
-  SENIOR_HELPS: ['helps', 'senior'] as const,
+  SENIOR_HELPS_CREATE: ['helps', 'senior', 'create'] as const,
   SENIOR_HELPS_LIST: ['helps', 'senior', 'list'] as const,
   SENIOR_HELP_DETAIL: (id: string) =>
     ['helps', 'senior', 'detail', id] as const,

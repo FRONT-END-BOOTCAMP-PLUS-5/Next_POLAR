@@ -14,7 +14,9 @@ export function useCreateHelp() {
     mutationFn: (formData: FormData) => postHelp(formData),
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.SENIOR_HELPS] });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.SENIOR_HELPS_CREATE],
+      });
     },
 
     onError: (error) => {
