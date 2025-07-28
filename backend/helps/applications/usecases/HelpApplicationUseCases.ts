@@ -1,14 +1,28 @@
 import { IHelpApplicantRepository } from '@/backend/helps/domains/repositories/IHelpApplicantRepository';
 import { HelpApplicantEntity } from '@/backend/helps/domains/entities/HelpApplicant';
 import { ApplicationStatusResponseDto } from '../dtos/HelpApplicationDto';
+import { getUuidByNickname } from '@/lib/getUserData';
 
 // 헬프 지원 UseCase
 export class ApplyHelpUseCase {
   constructor(private readonly applicantRepository: IHelpApplicantRepository) {}
 
-  async execute(helpId: number, juniorId: string): Promise<HelpApplicantEntity> {
+  async execute(
+    helpId: number,
+    juniorNickname: string
+  ): Promise<HelpApplicantEntity> {
+    // nickname을 UUID로 변환
+    const juniorId = await getUuidByNickname(juniorNickname);
+    if (!juniorId) {
+      throw new Error('존재하지 않는 사용자입니다.');
+    }
+
     // 중복 지원 체크
-    const isDuplicate = await this.applicantRepository.checkDuplicateApplication(helpId, juniorId);
+    const isDuplicate =
+      await this.applicantRepository.checkDuplicateApplication(
+        helpId,
+        juniorId
+      );
     if (isDuplicate) {
       throw new Error('이미 지원한 헬프입니다.');
     }
@@ -30,11 +44,22 @@ export class ApplyHelpUseCase {
 export class AcceptHelpApplicantUseCase {
   constructor(private readonly applicantRepository: IHelpApplicantRepository) {}
 
-  async execute(helpId: number, juniorId: string): Promise<HelpApplicantEntity> {
+  async execute(
+    helpId: number,
+    juniorNickname: string
+  ): Promise<HelpApplicantEntity> {
+    // nickname을 UUID로 변환
+    const juniorId = await getUuidByNickname(juniorNickname);
+    if (!juniorId) {
+      throw new Error('존재하지 않는 사용자입니다.');
+    }
+
     // 지원자 정보 조회
-    const applicants = await this.applicantRepository.getApplicantsByHelpId(helpId);
-    const applicant = applicants.find(a => a.juniorId === juniorId);
-    
+    const applicants = await this.applicantRepository.getApplicantsByHelpId(
+      helpId
+    );
+    const applicant = applicants.find((a) => a.juniorId === juniorId);
+
     if (!applicant) {
       throw new Error('지원자를 찾을 수 없습니다.');
     }
@@ -48,11 +73,25 @@ export class AcceptHelpApplicantUseCase {
 export class CheckHelpApplicationStatusUseCase {
   constructor(private readonly applicantRepository: IHelpApplicantRepository) {}
 
-  async execute(helpId: number, juniorId: string): Promise<ApplicationStatusResponseDto> {
+  async execute(
+    helpId: number,
+    juniorNickname: string
+  ): Promise<ApplicationStatusResponseDto> {
+    // nickname을 UUID로 변환
+    const juniorId = await getUuidByNickname(juniorNickname);
+    if (!juniorId) {
+      return {
+        hasApplied: false,
+        isAccepted: false,
+      };
+    }
+
     // 지원자 정보 조회
-    const applicants = await this.applicantRepository.getApplicantsByHelpId(helpId);
-    const applicant = applicants.find(a => a.juniorId === juniorId);
-    
+    const applicants = await this.applicantRepository.getApplicantsByHelpId(
+      helpId
+    );
+    const applicant = applicants.find((a) => a.juniorId === juniorId);
+
     if (!applicant) {
       return {
         hasApplied: false,
@@ -66,4 +105,4 @@ export class CheckHelpApplicationStatusUseCase {
       appliedAt: applicant.appliedAt.toISOString(),
     };
   }
-} 
+}

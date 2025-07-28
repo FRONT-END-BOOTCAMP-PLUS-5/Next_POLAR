@@ -1,11 +1,12 @@
 import { IHelpApplicantRepository } from '@/backend/helps/domains/repositories/IHelpApplicantRepository';
-import { HelpApplicantEntity } from '@/backend/helps/domains/entities/HelpApplicant';
+import { HelpApplicantDto } from '../dtos/HelpApplicantDto';
+import { HelpApplicantMapper } from '../mappers/HelpApplicantMapper';
 
 export class GetHelpApplicantsUseCase {
   constructor(private readonly applicantRepo: IHelpApplicantRepository) {}
 
-  async execute(helpId: number): Promise<HelpApplicantEntity[]> {
+  async execute(helpId: number): Promise<HelpApplicantDto[]> {
     const applicants = await this.applicantRepo.getApplicantsByHelpId(helpId);
-    return applicants;
+    return HelpApplicantMapper.toDtoList(applicants);
   }
-} 
+}
