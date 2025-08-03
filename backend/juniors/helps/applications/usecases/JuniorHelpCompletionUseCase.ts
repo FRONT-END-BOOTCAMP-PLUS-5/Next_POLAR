@@ -1,7 +1,7 @@
 // 주니어 Help 완료 처리 유스케이스
 import { IHelpStatusRepository } from '@/backend/common/repositories/IHelpStatusRepository';
 import { IJuniorHelpStatusRepository } from '@/backend/juniors/helps/domains/repositories/IJuniorHelpStatusRepository';
-import { HelpStatus } from '@/backend/helps/domains/entities/HelpStatus';
+import { HelpStatus } from '@/backend/common/entities/HelpStatus';
 import {
   JuniorsHelpCompletionDto,
   JuniorsHelpCompletionResponseDto,

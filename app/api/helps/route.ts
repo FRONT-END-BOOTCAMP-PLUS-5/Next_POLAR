@@ -6,7 +6,7 @@ import {
 } from '@/backend/helps/applications/usecases/CommonHelpUseCases';
 import { SbCommonHelpRepository } from '@/backend/helps/infrastructures/repositories/SbCommonHelpRepository';
 import { SbHelpImageRepository } from '@/backend/images/infrastructures/repositories/SbHelpImageRepository';
-import { GetUserByIdUseCase } from '@/backend/users/user/applications/usecases/CommonUserUseCase';
+import { CommonUserUseCase } from '@/backend/users/user/applications/usecases/CommonUserUseCase';
 import { SbUserRepository } from '@/backend/users/user/infrastructures/repositories/SbUserRepository';
 import { HelpResponseDto } from '@/backend/helps/applications/dtos/HelpDTO';
 import { HelpFilterDto } from '@/backend/helps/applications/dtos/HelpFilterDto';
@@ -128,10 +128,12 @@ export async function GET(
         const helpResponseDtos = await Promise.all(
           result.data.map(async (help) => {
             // 시니어 정보 가져오기
-            const getUserUseCase = new GetUserByIdUseCase(
+            const getUserUseCase = new CommonUserUseCase(
               new SbUserRepository()
             );
-            const seniorUser = await getUserUseCase.execute(help.seniorId);
+            const seniorUser = await getUserUseCase.getUserByNickname(
+              help.seniorInfo.nickname
+            );
 
             // 이미지 URL 가져오기
             const imageRepository = new SbHelpImageRepository();
@@ -142,6 +144,7 @@ export async function GET(
             return {
               id: help.id,
               seniorInfo: {
+                id: seniorUser?.id || '',
                 nickname: seniorUser?.nickname || '알 수 없음',
                 name: seniorUser?.name || '이름 없음',
                 userRole: 'senior' as const,
@@ -149,12 +152,12 @@ export async function GET(
                 address: seniorUser?.address || '주소 정보 없음',
               },
               title: help.title,
-              startDate: help.startDate.toISOString().split('T')[0], // YYYY-MM-DD 형식
-              endDate: help.endDate.toISOString().split('T')[0], // YYYY-MM-DD 형식
+              startDate: help.startDate.toString().split('T')[0], // YYYY-MM-DD 형식
+              endDate: help.endDate.toString().split('T')[0], // YYYY-MM-DD 형식
               category: help.category,
               content: help.content,
               status: help.status,
-              createdAt: help.createdAt.toISOString(), // ISO 문자열
+              createdAt: help.createdAt.toString(), // ISO 문자열
               images: images,
             };
           })
@@ -177,10 +180,12 @@ export async function GET(
         const helpResponseDtos = await Promise.all(
           helpEntities.map(async (help) => {
             // 시니어 정보 가져오기
-            const getUserUseCase = new GetUserByIdUseCase(
+            const getUserUseCase = new CommonUserUseCase(
               new SbUserRepository()
             );
-            const seniorUser = await getUserUseCase.execute(help.seniorId);
+            const seniorUser = await getUserUseCase.getUserByNickname(
+              help.seniorInfo.nickname
+            );
 
             // 이미지 URL 가져오기
             const imageRepository = new SbHelpImageRepository();
@@ -191,6 +196,7 @@ export async function GET(
             return {
               id: help.id,
               seniorInfo: {
+                id: seniorUser?.id || '',
                 nickname: seniorUser?.nickname || '알 수 없음',
                 name: seniorUser?.name || '이름 없음',
                 userRole: 'senior' as const,
@@ -198,12 +204,12 @@ export async function GET(
                 address: seniorUser?.address || '주소 정보 없음',
               },
               title: help.title,
-              startDate: help.startDate.toISOString().split('T')[0], // YYYY-MM-DD 형식
-              endDate: help.endDate.toISOString().split('T')[0], // YYYY-MM-DD 형식
+              startDate: help.startDate.toString().split('T')[0], // YYYY-MM-DD 형식
+              endDate: help.endDate.toString().split('T')[0], // YYYY-MM-DD 형식
               category: help.category,
               content: help.content,
               status: help.status,
-              createdAt: help.createdAt.toISOString(), // ISO 문자열
+              createdAt: help.createdAt.toString(), // ISO 문자열
               images: images,
             };
           })

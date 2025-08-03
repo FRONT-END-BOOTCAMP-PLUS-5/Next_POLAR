@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { verifyJuniorHelpCompletion } from '@/lib/api_front/help.api';
 import styles from './commons/HelpVerificationModal.module.css';
 
 interface VerificationModalProps {
@@ -46,23 +47,11 @@ export default function VerificationModal({
 
     try {
       // 인증번호 검증 API 호출
-      const response = await fetch(`/api/juniors/helps/${helpId}/completion`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ verificationCode: String(verificationCode) }),
-      });
-
-      if (response.ok) {
-        setStep('completed');
-      } else {
-        alert('인증번호가 올바르지 않습니다.');
-        setStep('input');
-      }
+      await verifyJuniorHelpCompletion(helpId, String(verificationCode));
+      setStep('completed');
     } catch (error) {
       console.error('인증번호 검증 오류:', error);
-      alert('인증번호 검증 중 오류가 발생했습니다.');
+      alert('인증번호가 올바르지 않습니다.');
       setStep('input');
     } finally {
       setIsSubmitting(false);

@@ -1,4 +1,3 @@
-//Help Entity와 동일함.
 export interface HelpData {
   id: number;
   senior_id: string; // UUID로 변경

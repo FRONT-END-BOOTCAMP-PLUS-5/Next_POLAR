@@ -2,6 +2,14 @@ import { supabase } from '@/backend/common/utils/supabaseClient';
 import { IHelpApplicantRepository } from '@/backend/helps/domains/repositories/IHelpApplicantRepository';
 import { HelpApplicantEntity } from '@/backend/helps/domains/entities/HelpApplicant';
 
+export interface HelpApplicantData {
+  id: number;
+  help_id: number;
+  junior_id: string;
+  is_accepted: boolean;
+  applied_at: string;
+}
+
 export class SbHelpApplicantRepository implements IHelpApplicantRepository {
   async getApplicantsByHelpId(helpId: number): Promise<HelpApplicantEntity[]> {
     // help_applicants에서 junior_id로 users 테이블 join
@@ -13,16 +21,21 @@ export class SbHelpApplicantRepository implements IHelpApplicantRepository {
     if (error) throw new Error(error.message);
 
     // 엔티티로 변환
-    return (data ?? []).map((row: any) => new HelpApplicantEntity(
-      row.id,
-      row.help_id,
-      row.junior_id,
-      row.is_accepted,
-      new Date(row.applied_at)
-    ));
+    return (data ?? []).map(
+      (row: HelpApplicantData) =>
+        new HelpApplicantEntity(
+          row.id,
+          row.help_id,
+          row.junior_id,
+          row.is_accepted,
+          new Date(row.applied_at)
+        )
+    );
   }
 
-  async createHelpApplication(applicant: HelpApplicantEntity): Promise<HelpApplicantEntity> {
+  async createHelpApplication(
+    applicant: HelpApplicantEntity
+  ): Promise<HelpApplicantEntity> {
     const { data, error } = await supabase
       .from('help_applicants')
       .insert({
@@ -45,7 +58,9 @@ export class SbHelpApplicantRepository implements IHelpApplicantRepository {
     );
   }
 
-  async acceptHelpApplicant(applicant: HelpApplicantEntity): Promise<HelpApplicantEntity> {
+  async acceptHelpApplicant(
+    applicant: HelpApplicantEntity
+  ): Promise<HelpApplicantEntity> {
     const { data, error } = await supabase
       .from('help_applicants')
       .update({
@@ -66,7 +81,10 @@ export class SbHelpApplicantRepository implements IHelpApplicantRepository {
     );
   }
 
-  async checkDuplicateApplication(helpId: number, juniorId: string): Promise<boolean> {
+  async checkDuplicateApplication(
+    helpId: number,
+    juniorId: string
+  ): Promise<boolean> {
     const { data, error } = await supabase
       .from('help_applicants')
       .select('id')
@@ -77,6 +95,6 @@ export class SbHelpApplicantRepository implements IHelpApplicantRepository {
     if (error) throw new Error(error.message);
 
     // 데이터가 1개라도 있으면 중복 지원
-    return (data && data.length > 0);
+    return data && data.length > 0;
   }
-} 
+}

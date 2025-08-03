@@ -32,5 +32,3 @@ export interface UserProfileResponseDto {
   address: string;
   nickname: string;
 }
-
-

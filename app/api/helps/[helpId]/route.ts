@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { SbCommonHelpRepository } from '@/backend/helps/infrastructures/repositories/SbCommonHelpRepository';
 import { GetHelpDetailUseCase } from '@/backend/helps/applications/usecases/CommonHelpUseCases';
 import { HelpDetailResponseDto } from '@/backend/helps/applications/dtos/HelpDTO';
-import { GetUserByIdUseCase } from '@/backend/users/user/applications/usecases/CommonUserUseCase';
+import { CommonUserUseCase } from '@/backend/users/user/applications/usecases/CommonUserUseCase';
 import { SbUserRepository } from '@/backend/users/user/infrastructures/repositories/SbUserRepository';
 import { SbHelpImageRepository } from '@/backend/images/infrastructures/repositories/SbHelpImageRepository';
 
@@ -25,8 +25,10 @@ export async function GET(
 
     if (helpEntity) {
       // 시니어 정보 가져오기
-      const getUserUseCase = new GetUserByIdUseCase(new SbUserRepository());
-      const seniorUser = await getUserUseCase.execute(helpEntity.seniorId);
+      const getUserUseCase = new CommonUserUseCase(new SbUserRepository());
+      const seniorUser = await getUserUseCase.getUserByNickname(
+        helpEntity.seniorInfo.nickname
+      );
 
       // 이미지 URL 가져오기
       const imageRepository = new SbHelpImageRepository();
@@ -44,12 +46,12 @@ export async function GET(
           address: '', // 기본값 설정
         },
         title: helpEntity.title,
-        startDate: helpEntity.startDate.toISOString(),
-        endDate: helpEntity.endDate.toISOString(),
+        startDate: helpEntity.startDate.toString(),
+        endDate: helpEntity.endDate.toString(),
         category: helpEntity.category,
         content: helpEntity.content,
         status: helpEntity.status,
-        createdAt: helpEntity.createdAt.toISOString(),
+        createdAt: helpEntity.createdAt.toString(),
         images: images,
       };
 

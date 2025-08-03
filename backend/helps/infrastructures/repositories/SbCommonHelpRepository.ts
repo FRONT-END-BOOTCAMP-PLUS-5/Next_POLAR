@@ -1,8 +1,5 @@
 import { supabase } from '@/backend/common/utils/supabaseClient';
-import {
-  CommonHelpEntity,
-  CommonHelpWithNicknameEntity,
-} from '@/backend/helps/domains/entities/CommonHelpEntity';
+import { CommonHelpEntity } from '@/backend/helps/domains/entities/CommonHelpEntity';
 import { ICommonHelpRepository } from '@/backend/helps/domains/repositories/ICommonHelpRepository';
 import { HelpData } from '@/backend/helps/infrastructures/mappers/CommonHelpDataMapper';
 import { HelpFilterDto } from '@/backend/helps/applications/dtos/HelpFilterDto';
@@ -19,12 +16,6 @@ type CategoryJoinResult = {
       id: number;
       name: string;
     }[];
-  };
-};
-
-type HelpWithSeniorData = HelpData & {
-  senior?: {
-    nickname: string;
   };
 };
 
@@ -101,28 +92,6 @@ export class SbCommonHelpRepository implements ICommonHelpRepository {
     );
   }
 
-  /**
-   * HelpData를 CommonHelpWithNicknameEntity로 변환하는 공통 메서드
-   */
-  private async createHelpWithNicknameEntity(
-    help: HelpWithSeniorData
-  ): Promise<CommonHelpWithNicknameEntity> {
-    const categories = await this.getHelpCategories(help.id);
-
-    return new CommonHelpWithNicknameEntity(
-      help.id,
-      help.senior_id,
-      help.senior?.nickname || '알 수 없음',
-      help.title,
-      new Date(help.start_date),
-      new Date(help.end_date),
-      categories,
-      help.content,
-      help.status,
-      new Date(help.created_at)
-    );
-  }
-
   async getHelpList(): Promise<CommonHelpEntity[] | null> {
     try {
       const { data, error } = await supabase.from('helps').select('*');
@@ -143,33 +112,6 @@ export class SbCommonHelpRepository implements ICommonHelpRepository {
     }
   }
 
-  async getHelpListWithNicknames(): Promise<
-    CommonHelpWithNicknameEntity[] | null
-  > {
-    try {
-      const { data, error } = await supabase.from('helps').select(`
-          *,
-          senior:users!helps_senior_id_fkey(nickname)
-        `);
-
-      if (!data || error) {
-        console.error('[Repository] Supabase 헬프 리스트 조회 오류:', error);
-        return Promise.reject(null);
-      }
-
-      const helpEntities = await Promise.all(
-        (data as HelpWithSeniorData[]).map((help) =>
-          this.createHelpWithNicknameEntity(help)
-        )
-      );
-
-      return helpEntities;
-    } catch (error) {
-      console.error('[SbCommonHelpRepository] 헬프 리스트 조회 오류:', error);
-      throw new Error(`헬프 리스트 조회 오류: ${error}`);
-    }
-  }
-
   async getHelpById(id: number): Promise<CommonHelpEntity | null> {
     try {
       const { data: helpData, error: helpError } = await supabase
@@ -181,32 +123,6 @@ export class SbCommonHelpRepository implements ICommonHelpRepository {
       if (helpError || !helpData) return null;
 
       return await this.createHelpEntity(helpData);
-    } catch (error) {
-      console.error('[Repository] 헬프 상세 조회 오류:', error);
-      throw new Error('헬프 상세 조회 오류');
-    }
-  }
-
-  async getHelpByIdWithNickname(
-    id: number
-  ): Promise<CommonHelpWithNicknameEntity | null> {
-    try {
-      const { data: helpData, error: helpError } = await supabase
-        .from('helps')
-        .select(
-          `
-          *,
-          senior:users!helps_senior_id_fkey(nickname)
-        `
-        )
-        .eq('id', id)
-        .single();
-
-      if (helpError || !helpData) return null;
-
-      return await this.createHelpWithNicknameEntity(
-        helpData as HelpWithSeniorData
-      );
     } catch (error) {
       console.error('[Repository] 헬프 상세 조회 오류:', error);
       throw new Error('헬프 상세 조회 오류');
